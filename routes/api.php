@@ -6,6 +6,7 @@ use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\LoginController;
 use App\Http\Controllers\API\LogoutController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\CourseController;
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
@@ -26,3 +27,8 @@ Route::post('/data', [UserController::class, 'storeUserData']);
 
 # Logout
 Route::post('/logout', [LogoutController::class, 'logout']);
+
+# Courses
+Route::get('/all-courses', [CourseController::class, 'show']);
+Route::post('/rating', [CourseController::class, 'addRating']);
+

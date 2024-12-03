@@ -13,13 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-    Schema::create('records', function (Blueprint $table) {
-        $table->id();
-        $table->unsignedBigInteger('user_id');
-        $table->string('payment_image'); // اسم ملف الصورة
-        $table->timestamps();
-
-        $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        Schema::create('records', function (Blueprint $table) {
+            $table->id();
+            $table->string('student_name');
+            $table->integer('academic_year');
+            $table->string('receipt');
+            $table->timestamps();
         });
     }
 

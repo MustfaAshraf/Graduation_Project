@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RecordResource;
+use App\Models\Record;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class RecordController extends Controller
 {
@@ -22,13 +23,27 @@ class RecordController extends Controller
             'payment_receipt' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $imagePath = $request->file('payment_receipt')->store('payment_receipt', 'public');
-
-        return response()->json([
-            'message' => 'Data uploaded successfully',
+        if($request->hasFile('payment_receipt')) {
+            $img = $request->file('payment_receipt'); 
+            $imgName = rand() . time() . "." . $img->extension(); 
+            $destinationPath = public_path('receipts'); 
+            $img->move($destinationPath, $imgName);
+        }
+        $records = Record::create([
             'student_name' => $user->name,
-            'student_group' => $user->semester,
-            'image_path' => $imagePath,
-        ], 201);
+            'academic_year' => $user->semester,
+            'receipt' => $imgName
+        ]);
+
+        $data = [
+            'msg' => 'Request sent successfully',
+            'status' => 200,
+            'data' => [
+                'Student_Name' => $user->name,
+                'Academic_Year' => $user->semester,
+                'Receipt' => $imgName
+            ]
+        ];
+        return response()->json($data);
     }
 }

@@ -24,7 +24,7 @@ class UserController extends Controller
     
             $user = User::where('token', $token)->first();
     
-            if ($request->hasFile('image')) {
+            if($request->hasFile('image')) {
 
                 $img = $request->file('image'); 
                 $imgName = rand() . time() . "." . $img->extension(); 

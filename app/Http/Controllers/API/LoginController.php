@@ -25,6 +25,14 @@ class LoginController extends Controller
         // Check if user exists
         $user = User::where('email', $request->email)->first();
 
+        if(!$user){
+            $data = [
+                'msg' => 'Not Registered, Register first',
+                'status' => 400
+            ];
+            return response()->json($data);
+        }
+
         // Verify password
         if (!Hash::check($request->password, $user->password)) {
             $data = [

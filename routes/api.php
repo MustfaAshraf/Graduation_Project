@@ -31,4 +31,4 @@ Route::post('/logout', [LogoutController::class, 'logout']);
 # Courses
 Route::get('/all-courses', [CourseController::class, 'show']);
 Route::post('/rating', [CourseController::class, 'addRating']);
-
+Route::post('/course', [CourseController::class, 'showCourse']);

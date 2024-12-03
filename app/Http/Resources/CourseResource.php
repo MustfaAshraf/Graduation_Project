@@ -14,6 +14,7 @@ class CourseResource extends JsonResource
             'image' => $this->image,
             'instructor' => $this->instructor,
             'price' => $this->price,
+            'Rating Numbers' => $this->ratings_count,
             'rating' => $this->ratings_count > 0 
                     ? round($this->ratings_sum / $this->ratings_count, 2) 
                     : 0

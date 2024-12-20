@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy PHP app to Azure Web App - Students-Affairs
+name: Build and deploy PHP app to Azure Web App - Graduation-Project
 
 on:
   push:
@@ -61,15 +61,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D77DBA56A85742D0846F3FA2F7525AE1 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BD4A3698A5D8497CAA7F8B6CEA144732 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_478D12B580E5402C9AA7C96E6F88B505 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1A2668DE3621486F8AD9AE11E81516C5 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A6D5BE1C6C25429481EEDBA1AB4AA48D }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5A9516DDE2BD4A7D9D4DF7B9B81B7F28 }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: 'Students-Affairs'
+          app-name: 'Graduation-Project'
           slot-name: 'Production'
           package: .
           

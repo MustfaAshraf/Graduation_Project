@@ -37,13 +37,12 @@ class RecordController extends Controller
 
         $data = [
             'msg' => 'Request sent successfully',
-            'status' => 200,
             'data' => [
                 'Student_Name' => $user->name,
                 'Academic_Year' => $user->semester,
                 'Receipt' => $imgName
             ]
         ];
-        return response()->json($data);
+        return response()->json($data,200);
     }
 }

@@ -14,19 +14,15 @@ class CourseController extends Controller
         $courses = CourseResource::collection(course::all());
 
         if ($courses->isEmpty()) {
-            $data = [
-                'msg' => 'No courses available',
-                'status' => 404,
-            ];
+            return response()->json([
+                'msg' => 'No Courses Available',
+            ], 404);
         } else {
-            $data = [
+            return response()->json([
                 'msg' => 'All courses available',
-                'status' => 200,
                 'data' => $courses
-            ];
+            ], 200);
         }
-    
-        return response()->json($data);
     }
 
     public function addRating(Request $request)
@@ -35,9 +31,8 @@ class CourseController extends Controller
 
         if (!$course) {
             return response()->json([
-                'msg' => 'Course not found',
-                'status' => 404
-            ]);
+                'msg' => 'Course Not Found',
+            ], 404);
         }
 
         $validatedData = $request->validate([
@@ -50,9 +45,8 @@ class CourseController extends Controller
         $course->save();
 
         return response()->json([
-            'msg' => 'Rating added successfully',
-            'status' => 200,
-        ]);
+            'msg' => 'Rating added successfully'
+        ],200);
     }
 
     public function showCourse(Request $request)
@@ -60,15 +54,13 @@ class CourseController extends Controller
         $course = Course::find($request->id);
         if (!$course) {
             return response()->json([
-                'msg' => 'Course not found',
-                'status' => 404
-            ]);
+                'msg' => 'Course not found'
+            ],404);
         }
         return response()->json([
             'msg' => 'Course found',
-            'status' => 200,
             'data' => new CourseResource($course)
-        ]);
+        ],200);
     }
 
 }

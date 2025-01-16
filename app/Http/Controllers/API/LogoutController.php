@@ -17,10 +17,9 @@ class LogoutController extends Controller
         
         if (!$user) {
             $data = [
-                'msg' => 'Token Not Valid',
-                'status' => 401
+                'msg' => 'Token Not Valid'
             ];
-            return response()->json($data);
+            return response()->json($data,401);
         }
 
         $user->token = null;
@@ -28,8 +27,7 @@ class LogoutController extends Controller
 
         $data = [
             'msg' => 'Logged Out Successfully',
-            'status' => 200
         ];
-        return response()->json($data);
+        return response()->json($data,200);
     }
 }

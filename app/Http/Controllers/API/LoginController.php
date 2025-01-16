@@ -27,19 +27,17 @@ class LoginController extends Controller
 
         if(!$user){
             $data = [
-                'msg' => 'Not Registered, Register first',
-                'status' => 400
+                'msg' => 'Not Registered, Register first'
             ];
-            return response()->json($data);
+            return response()->json($data,404);
         }
 
         // Verify password
         if (!Hash::check($request->password, $user->password)) {
             $data = [
-                'msg' => 'Invalid Credentials',
-                'status' => 401
+                'msg' => 'Invalid Credentials'
             ];
-            return response()->json($data);
+            return response()->json($data,401);
         }
 
         $is_completed = 1;
@@ -57,12 +55,11 @@ class LoginController extends Controller
         // Successful login response
         $data = [
             'msg' => 'Welcome, you are logged in',
-            'status' => 200,
             'token' => $token,
             'Is_Completed' => $is_completed,
             'data' => $user
         ];
-        return response()->json($data);
+        return response()->json($data,200);
     }
 
     public function sendResetLink(Request $request)
@@ -84,10 +81,9 @@ class LoginController extends Controller
 
         $data = [
             'msg' => 'OTP sent to your email',
-            'status' => 200,
             'otp' => $otp
         ];
-        return response()->json($data);
+        return response()->json($data,200);
     }
 
     public function resetPassword(Request $request)
@@ -101,18 +97,16 @@ class LoginController extends Controller
 
         if (!$passwordReset) {
             $data = [
-                'msg' => 'Invalid OTP',
-                'status' => 400
+                'msg' => 'Invalid OTP'
             ];
-            return response()->json($data);
+            return response()->json($data,401);
         }
 
         if (Carbon::now()->greaterThan($passwordReset->otp_expires_at)) {
             $data = [
-                'msg' => 'OTP Has Expired',
-                'status' => 400
+                'msg' => 'OTP Has Expired'
             ];
-            return response()->json($data);
+            return response()->json($data,400);
         }
 
         $user = User::where('email', $passwordReset->email)->first();
@@ -122,9 +116,8 @@ class LoginController extends Controller
         DB::table('password_resets')->where('email', $passwordReset->email)->delete();
 
         $data = [
-            'msg' => 'Password reset successfully',
-            'status' => 200
+            'msg' => 'Password reset successfully'
         ];
-        return response()->json($data);
+        return response()->json($data,200);
     }
 }

@@ -10,15 +10,23 @@ use Carbon\Carbon;
 use App\Mail\OTPMail;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class RegisterController extends Controller
 {
     public function register(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed|min:6',
-        ]);
+        try {
+            $request->validate([
+                'email' => 'required|email|unique:users',
+                'password' => 'required|confirmed|min:6',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         $token = Str::random(60);
         $otp = Str::random(6);

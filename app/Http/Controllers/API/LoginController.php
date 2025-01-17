@@ -11,16 +11,23 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        // Validate input data
+        try{
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         // Check if user exists
         $user = User::where('email', $request->email)->first();
@@ -64,9 +71,16 @@ class LoginController extends Controller
 
     public function sendResetLink(Request $request)
     {
+        try{
         $request->validate([
             'email' => 'required|email|exists:users,email',
         ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         $otp = Str::random(6);
 
@@ -88,10 +102,17 @@ class LoginController extends Controller
 
     public function resetPassword(Request $request)
     {
+        try{
         $request->validate([
             'otp' => 'required',
             'password' => 'required|confirmed|min:6',
         ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         $passwordReset = DB::table('password_resets')->where('otp_code', $request->otp)->first();
 

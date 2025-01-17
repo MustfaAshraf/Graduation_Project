@@ -7,6 +7,7 @@ use App\Http\Resources\RecordResource;
 use App\Models\Record;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class RecordController extends Controller
 {
@@ -19,9 +20,16 @@ class RecordController extends Controller
 
         $user = User::where('token', $token)->first();
 
-        $validatedData = $request->validate([
+        try{
+        $request->validate([
             'payment_receipt' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         if($request->hasFile('payment_receipt')) {
             $img = $request->file('payment_receipt'); 
@@ -37,13 +45,12 @@ class RecordController extends Controller
 
         $data = [
             'msg' => 'Request sent successfully',
-            'status' => 200,
             'data' => [
                 'Student_Name' => $user->name,
                 'Academic_Year' => $user->semester,
                 'Receipt' => $imgName
             ]
         ];
-        return response()->json($data);
+        return response()->json($data,200);
     }
 }

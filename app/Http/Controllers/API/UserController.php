@@ -43,18 +43,16 @@ class UserController extends Controller
 
             $data = [
                 'msg' => 'Data completed successfully',
-                'status' => 200,
                 'data' => $user
             ];
-            return response()->json($data);
+            return response()->json($data,200);
     
         } catch (\Illuminate\Validation\ValidationException $e) {
             $data = [
                 'msg' => 'Validation error',
-                'status' => 400,
                 'errors' => $e->errors()
             ];
-            return response()->json($data);
+            return response()->json($data,401);
         }
     }
 }

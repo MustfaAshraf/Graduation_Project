@@ -11,35 +11,40 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        // Validate input data
+        try{
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         // Check if user exists
         $user = User::where('email', $request->email)->first();
 
         if(!$user){
             $data = [
-                'msg' => 'Not Registered, Register first',
-                'status' => 400
+                'msg' => 'Not Registered, Register first'
             ];
-            return response()->json($data);
+            return response()->json($data,404);
         }
 
         // Verify password
         if (!Hash::check($request->password, $user->password)) {
             $data = [
-                'msg' => 'Invalid Credentials',
-                'status' => 401
+                'msg' => 'Invalid Credentials'
             ];
-            return response()->json($data);
+            return response()->json($data,401);
         }
 
         $is_completed = 1;
@@ -57,19 +62,25 @@ class LoginController extends Controller
         // Successful login response
         $data = [
             'msg' => 'Welcome, you are logged in',
-            'status' => 200,
             'token' => $token,
             'Is_Completed' => $is_completed,
             'data' => $user
         ];
-        return response()->json($data);
+        return response()->json($data,200);
     }
 
     public function sendResetLink(Request $request)
     {
+        try{
         $request->validate([
             'email' => 'required|email|exists:users,email',
         ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         $otp = Str::random(6);
 
@@ -84,35 +95,39 @@ class LoginController extends Controller
 
         $data = [
             'msg' => 'OTP sent to your email',
-            'status' => 200,
             'otp' => $otp
         ];
-        return response()->json($data);
+        return response()->json($data,200);
     }
 
     public function resetPassword(Request $request)
     {
+        try{
         $request->validate([
             'otp' => 'required',
             'password' => 'required|confirmed|min:6',
         ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         $passwordReset = DB::table('password_resets')->where('otp_code', $request->otp)->first();
 
         if (!$passwordReset) {
             $data = [
-                'msg' => 'Invalid OTP',
-                'status' => 400
+                'msg' => 'Invalid OTP'
             ];
-            return response()->json($data);
+            return response()->json($data,401);
         }
 
         if (Carbon::now()->greaterThan($passwordReset->otp_expires_at)) {
             $data = [
-                'msg' => 'OTP Has Expired',
-                'status' => 400
+                'msg' => 'OTP Has Expired'
             ];
-            return response()->json($data);
+            return response()->json($data,400);
         }
 
         $user = User::where('email', $passwordReset->email)->first();
@@ -122,9 +137,8 @@ class LoginController extends Controller
         DB::table('password_resets')->where('email', $passwordReset->email)->delete();
 
         $data = [
-            'msg' => 'Password reset successfully',
-            'status' => 200
+            'msg' => 'Password reset successfully'
         ];
-        return response()->json($data);
+        return response()->json($data,200);
     }
 }

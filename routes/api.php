@@ -10,6 +10,8 @@ use App\Http\Controllers\API\CourseController;
 use App\Http\Controllers\API\GetProfile;
 
 use App\Http\Controllers\Api\RecordController;
+use App\Http\Controllers\API\CourseImagesController; 
+
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -40,3 +42,7 @@ Route::post('/user-data', [GetProfile::class, 'getUserInfo']);
 
 # Record
 Route::post('/university-requests', [RecordController::class, 'store']);
+
+#CoursesImages
+Route::post('/images/add', [CourseImagesController::class, 'uploadImage']);
+Route::get('/all-images', [CourseImagesController::class, 'getImages']);

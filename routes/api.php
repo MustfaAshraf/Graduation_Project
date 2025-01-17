@@ -8,7 +8,7 @@ use App\Http\Controllers\API\LogoutController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\CourseController;
 use App\Http\Controllers\Api\RecordController;
-use App\Http\Controllers\API\CourseImagesController;  // تأكد من استخدام المسار الصحيح لـ CourseImagesController
+use App\Http\Controllers\API\CourseImagesController; 
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

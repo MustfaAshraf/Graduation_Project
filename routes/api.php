@@ -39,6 +39,5 @@ Route::post('/course', [CourseController::class, 'showCourse']);
 Route::post('/university-requests', [RecordController::class, 'store']);
 
 #CoursesImages
-Route::post('/images', [CourseImagesController::class, 'uploadImage']);
-
-Route::get('/images', [CourseImagesController::class, 'getImages']);
+Route::post('/images/add', [CourseImagesController::class, 'uploadImage']);
+Route::get('/all-images', [CourseImagesController::class, 'getImages']);

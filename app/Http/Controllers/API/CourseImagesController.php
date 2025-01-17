@@ -5,32 +5,42 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CourseImages;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class CourseImagesController extends Controller
 {
     public function uploadImage(Request $request)
     {
+        try{
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => 'Validation failed', // Custom key
+                'errors' => $e->errors(), // Validation errors
+            ], 422);
+        }
 
-        if ($request->hasFile('image')) {
-            $img = $request->file('image');
-            $imgName = rand() . time() . "." . $img->extension();
-            $imagePath = $img->storeAs('courses_images', $imgName, 'public');
+        if($request->hasFile('image')) {
 
-            $courseImage = CourseImages::create([
-                'image' => $imagePath,
+            $img = $request->file('image'); 
+            $imgName = rand() . time() . "." . $img->extension(); 
+            $destinationPath = public_path('courses_imgs'); 
+            $img->move($destinationPath, $imgName);
+
+            CourseImages::create([
+                'image' => $imgName,
             ]);
 
             return response()->json([
-                'message' => 'Image uploaded successfully',
-                'image_url' => asset('storage/' . $imagePath),
+                'msg' => 'Image stored successfully',
+                'image' => $imgName,
             ], 200);
         } else {
             return response()->json([
-                'message' => 'No image found in the request',
-            ], 400);
+                'msg' => 'No image found in the request',
+            ], 404);
         }
     }
 
@@ -39,15 +49,14 @@ class CourseImagesController extends Controller
         $courseImages = CourseImages::all();
 
         if ($courseImages->isEmpty()) {
-            return response()->json(['message' => 'No images found'], 404);
+            return response()->json([
+                'msg' => 'No images found'
+            ], 404);
+        }else{
+            return response()->json([
+                'msg' => 'Images retrieved successfully',
+                'data' => $courseImages
+            ], 200);
         }
-
-        $imageUrls = $courseImages->map(function($image) {
-            return asset('storage/' . $image->image);
-        });
-
-        return response()->json([
-            'images' => $imageUrls,
-        ]);
     }
 }

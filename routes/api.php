@@ -7,6 +7,8 @@ use App\Http\Controllers\API\LoginController;
 use App\Http\Controllers\API\LogoutController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\CourseController;
+use App\Http\Controllers\API\GetProfile;
+
 use App\Http\Controllers\Api\RecordController;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
@@ -32,6 +34,9 @@ Route::post('/logout', [LogoutController::class, 'logout']);
 Route::get('/all-courses', [CourseController::class, 'show']);
 Route::post('/rating', [CourseController::class, 'addRating']);
 Route::post('/course', [CourseController::class, 'showCourse']);
+
+// User profile
+Route::post('/user-data', [GetProfile::class, 'getUserInfo']);
 
 # Record
 Route::post('/university-requests', [RecordController::class, 'store']);

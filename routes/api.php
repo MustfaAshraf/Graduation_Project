@@ -8,6 +8,8 @@ use App\Http\Controllers\API\LogoutController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\CourseController;
 use App\Http\Controllers\Api\RecordController;
+use App\Http\Controllers\API\CourseImagesController;  // تأكد من استخدام المسار الصحيح لـ CourseImagesController
+
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -35,3 +37,8 @@ Route::post('/course', [CourseController::class, 'showCourse']);
 
 # Record
 Route::post('/university-requests', [RecordController::class, 'store']);
+
+#CoursesImages
+Route::post('/images', [CourseImagesController::class, 'uploadImage']);
+
+Route::get('/images', [CourseImagesController::class, 'getImages']);

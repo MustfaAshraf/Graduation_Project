@@ -18,8 +18,8 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/verify-otp', [RegisterController::class, 'verifyOTP']);
 
 # Login & Reset Password
-Route::get('/login',function(){});
 Route::post('/login', [LoginController::class, 'login']);
+Route::get('/login',function(){});
 Route::post('/forgot-password', [LoginController::class, 'sendResetLink']);
 Route::post('/reset-password', [LoginController::class, 'resetPassword']);
 

@@ -102,11 +102,11 @@ class LoginController extends Controller
 
     public function resetPassword(Request $request)
     {
-        try{
-        $request->validate([
-            'otp' => 'required',
-            'password' => 'required|confirmed|min:6',
-        ]);
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required|confirmed|min:6',
+            ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'msg' => 'Validation failed',
@@ -114,31 +114,22 @@ class LoginController extends Controller
             ], 422);
         }
 
-        $passwordReset = DB::table('password_resets')->where('otp_code', $request->otp)->first();
+        $user = User::where('email', $request->email)->first();
 
-        if (!$passwordReset) {
-            $data = [
-                'msg' => 'Invalid OTP'
-            ];
-            return response()->json($data,401);
+        if (!$user) {
+            return response()->json([
+                'msg' => 'User not found',
+            ], 404);
         }
 
-        if (Carbon::now()->greaterThan($passwordReset->otp_expires_at)) {
-            $data = [
-                'msg' => 'OTP Has Expired'
-            ];
-            return response()->json($data,400);
-        }
-
-        $user = User::where('email', $passwordReset->email)->first();
         $user->password = Hash::make($request->password);
         $user->save();
 
-        DB::table('password_resets')->where('email', $passwordReset->email)->delete();
+        DB::table('password_resets')->where('email', $request->email)->delete();
 
-        $data = [
-            'msg' => 'Password reset successfully'
-        ];
-        return response()->json($data,200);
+        return response()->json([
+            'msg' => 'Password reset successfully',
+        ], 200); // Success
     }
+
 }

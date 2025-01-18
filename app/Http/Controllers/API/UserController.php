@@ -14,10 +14,11 @@ class UserController extends Controller
             $validatedData = $request->validate([
                 'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'name' => 'required|string|max:255',
-                'semester' => 'required|string|max:10',
+                'semester' => 'string|max:10',
                 'department' => 'required|string|max:255',
-                'gpa' => 'required|numeric|between:0,4.00',
-                'university_code' => 'nullable|string|unique:users,university_code'
+                'gpa' => 'numeric|between:0,4.00',
+                'university_code' => 'nullable|string|unique:users,university_code',
+                'national_id' => 'nullable|string|unique:users,national_id'
             ]);
     
             $token = str_replace('Bearer ', '', $request->header('Authorization'));

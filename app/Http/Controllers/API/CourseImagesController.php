@@ -51,7 +51,7 @@ class CourseImagesController extends Controller
         if ($courseImages->isEmpty()) {
             return response()->json([
                 'msg' => 'No images found'
-            ], 404);
+            ], 402);
         }else{
             return response()->json([
                 'msg' => 'Images retrieved successfully',

@@ -17,7 +17,7 @@ class CourseController extends Controller
         if ($courses->isEmpty()) {
             return response()->json([
                 'msg' => 'No Courses Available',
-            ], 200);
+            ], 402);
         } else {
             return response()->json([
                 'msg' => 'All courses available',

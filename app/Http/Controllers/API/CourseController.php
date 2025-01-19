@@ -17,7 +17,7 @@ class CourseController extends Controller
         if ($courses->isEmpty()) {
             return response()->json([
                 'msg' => 'No Courses Available',
-            ], 402);
+            ], 451);
         } else {
             return response()->json([
                 'msg' => 'All courses available',
@@ -33,7 +33,7 @@ class CourseController extends Controller
         if (!$course) {
             return response()->json([
                 'msg' => 'Course Not Found',
-            ], 404);
+            ], 451);
         }
 
         try{
@@ -63,7 +63,7 @@ class CourseController extends Controller
         if (!$course) {
             return response()->json([
                 'msg' => 'Course not found'
-            ],404);
+            ],451);
         }
         return response()->json([
             'msg' => 'Course found',

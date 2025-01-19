@@ -12,16 +12,13 @@ class GetProfile extends Controller
 
     public function getUserInfo(Request $request)
     {
-        // Get the token from the request
         $token = str_replace('Bearer ', '', $request->header('Authorization'));
-        // Retrieve user based on the token
         $user = User::where('token', $token)->first();
     
         if (!$user) {
-            // Return a 404 response if the user is not found
             return response()->json([
                 'msg' => 'Not Registered, Register first'
-            ], 404);
+            ], 451);
         }
         else {
             return response()->json([

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CourseResource;
 use App\Models\course;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class CourseController extends Controller
 {
@@ -16,7 +17,7 @@ class CourseController extends Controller
         if ($courses->isEmpty()) {
             return response()->json([
                 'msg' => 'No Courses Available',
-            ], 404);
+            ], 200);
         } else {
             return response()->json([
                 'msg' => 'All courses available',
@@ -35,10 +36,17 @@ class CourseController extends Controller
             ], 404);
         }
 
+        try{
         $validatedData = $request->validate([
             'id' => 'required|numeric',
             'rating' => 'required|numeric|min:0|max:5',
         ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         $course->ratings_sum += $validatedData['rating'];
         $course->ratings_count += 1;

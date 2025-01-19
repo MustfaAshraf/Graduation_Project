@@ -44,7 +44,7 @@ class RecordController extends Controller
             $destinationPath = public_path('receipts'); 
             $img->move($destinationPath, $imgName);
         }
-        $records = Record::create([
+        Record::create([
             'student_name' => $user->name,
             'academic_year' => $user->semester,
             'receipt' => $imgName

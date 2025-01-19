@@ -14,8 +14,8 @@ return new class extends Migration
             $table->string('image');
             $table->string('instructor');
             $table->decimal('price', 8, 2);
-            $table->unsignedInteger('ratings_count')->default(0); // عدد التقييمات
-            $table->decimal('ratings_sum', 10, 2)->default(0); // مجموع التقييمات
+            $table->unsignedInteger('ratings_count')->default(0); 
+            $table->decimal('ratings_sum', 10, 2)->default(0);
             $table->timestamps();
         });
     }

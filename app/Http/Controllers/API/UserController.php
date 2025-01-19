@@ -11,7 +11,7 @@ class UserController extends Controller
     public function storeUserData(Request $request)
     {
         try {
-            $validatedData = $request->validate([
+            $request->validate([
                 'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'name' => 'required|string|max:255',
                 'semester' => 'string|max:10',
@@ -24,6 +24,13 @@ class UserController extends Controller
             $token = str_replace('Bearer ', '', $request->header('Authorization'));
     
             $user = User::where('token', $token)->first();
+
+            if(!$user){
+                $data = [
+                    'msg' => 'Invalid token, User not found'
+                ];
+                return response()->json($data,401);
+            }
     
             if($request->hasFile('image')) {
 
@@ -53,7 +60,7 @@ class UserController extends Controller
                 'msg' => 'Validation error',
                 'errors' => $e->errors()
             ];
-            return response()->json($data,401);
+            return response()->json($data,422);
         }
     }
 }

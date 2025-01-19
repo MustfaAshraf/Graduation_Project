@@ -17,7 +17,7 @@ class LogoutController extends Controller
         
         if (!$user) {
             $data = [
-                'msg' => 'Token Not Valid'
+                'msg' => 'Invalid token, User Not Found'
             ];
             return response()->json($data,401);
         }

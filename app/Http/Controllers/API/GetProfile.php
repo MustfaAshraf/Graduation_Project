@@ -17,8 +17,8 @@ class GetProfile extends Controller
     
         if (!$user) {
             return response()->json([
-                'msg' => 'Not Registered, Register first'
-            ], 451);
+                'msg' => 'Invalid token, User Not Found'
+            ], 401);
         }
         else {
             return response()->json([

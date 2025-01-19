@@ -20,6 +20,13 @@ class RecordController extends Controller
 
         $user = User::where('token', $token)->first();
 
+        if(!$user){
+            $data = [
+                'msg' => 'Invalid token, User Not Found'
+            ];
+            return response()->json($data,401);
+        }
+
         try{
         $request->validate([
             'payment_receipt' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',

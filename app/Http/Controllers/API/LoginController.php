@@ -36,7 +36,7 @@ class LoginController extends Controller
             $data = [
                 'msg' => 'Not Registered, Register first'
             ];
-            return response()->json($data,404);
+            return response()->json($data,410);
         }
 
         // Verify password

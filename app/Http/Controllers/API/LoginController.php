@@ -36,7 +36,7 @@ class LoginController extends Controller
             $data = [
                 'msg' => 'Not Registered, Register first'
             ];
-            return response()->json($data,204);
+            return response()->json($data,451);
         }
 
         // Verify password
@@ -119,7 +119,7 @@ class LoginController extends Controller
         if (!$user) {
             return response()->json([
                 'msg' => 'User not found',
-            ], 204);
+            ], 451);
         }
 
         $user->password = Hash::make($request->password);

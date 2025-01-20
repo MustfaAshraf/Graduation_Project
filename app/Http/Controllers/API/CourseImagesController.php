@@ -40,7 +40,7 @@ class CourseImagesController extends Controller
         } else {
             return response()->json([
                 'msg' => 'No image found in the request',
-            ], 204);
+            ], 451);
         }
     }
 
@@ -51,7 +51,7 @@ class CourseImagesController extends Controller
         if ($courseImages->isEmpty()) {
             return response()->json([
                 'msg' => 'No images found'
-            ], 204);
+            ], 451);
         }else{
             return response()->json([
                 'msg' => 'Images retrieved successfully',

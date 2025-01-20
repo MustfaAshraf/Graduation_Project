@@ -12,16 +12,16 @@ class CourseController extends Controller
 {
     public function show()
     {
-        $courses = CourseResource::collection(course::all());
+        $courses = course::all();
 
         if ($courses->isEmpty()) {
             return response()->json([
                 'msg' => 'No Courses Available',
-            ], 451);
+            ], 204);
         } else {
             return response()->json([
                 'msg' => 'All courses available',
-                'data' => new CourseResource($courses)
+                'data' => CourseResource::collection($courses)
             ], 200);
         }
     }
@@ -33,7 +33,7 @@ class CourseController extends Controller
         if (!$course) {
             return response()->json([
                 'msg' => 'Course Not Found',
-            ], 451);
+            ], 204);
         }
 
         try{
@@ -87,9 +87,17 @@ class CourseController extends Controller
             ], 422);
         }
 
+        if($request->hasFile('image')) {
+
+            $img = $request->file('image'); 
+            $imgName = rand() . time() . "." . $img->extension(); 
+            $destinationPath = public_path('courses_imgs'); 
+            $img->move($destinationPath, $imgName);
+        }
+
         $course = course::create([
             'title' => $validatedData['title'],
-            'image' => $validatedData['image'],
+            'image' => $imgName,
             'instructor' => $validatedData['instructor'],
             'price' => $validatedData['price'],
         ]);

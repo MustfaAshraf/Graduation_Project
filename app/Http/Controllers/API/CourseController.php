@@ -133,7 +133,7 @@ class CourseController extends Controller
         return response()->json([
             'msg' => 'Course found',
             'data' => new CourseResource($course),
-            'user rating' => $rating
+            'user rating' => $rating->rating
         ],200);
     }
 

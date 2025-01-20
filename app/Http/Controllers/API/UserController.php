@@ -17,7 +17,6 @@ class UserController extends Controller
                 'semester' => 'string|max:10',
                 'department' => 'required|string|max:255',
                 'gpa' => 'numeric|between:0,4.00',
-                'university_code' => 'nullable|string|unique:users,university_code',
                 'national_id' => 'nullable|string|unique:users,national_id'
             ]);
     
@@ -45,7 +44,6 @@ class UserController extends Controller
                 'semester' => $request->semester,
                 'department' => $request->department,
                 'gpa' => $request->gpa,
-                'university_code' => $request->university_code,
                 'national_id' => $request->national_id
             ]);
     

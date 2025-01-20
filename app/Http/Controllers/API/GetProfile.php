@@ -25,9 +25,9 @@ class GetProfile extends Controller
                 'image' => $user->image,
                 'name' => $user->name,
                 'semester' => $user->semester,
-                'gpa' => $user->gpa,
                 'department' => $user->department,
-                'university_code' => $user->university_code,
+                'gpa' => $user->gpa,
+                'national_id' => $user->national_id,
             ], 200);
         }
     }

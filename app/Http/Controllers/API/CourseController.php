@@ -17,7 +17,7 @@ class CourseController extends Controller
         if ($courses->isEmpty()) {
             return response()->json([
                 'msg' => 'No Courses Available',
-            ], 451);
+            ], 200);
         } else {
             return response()->json([
                 'msg' => 'All courses available',
@@ -33,7 +33,7 @@ class CourseController extends Controller
         if (!$course) {
             return response()->json([
                 'msg' => 'Course Not Found',
-            ], 451);
+            ], 200);
         }
 
         try{
@@ -43,8 +43,7 @@ class CourseController extends Controller
         ]);
         } catch (ValidationException $e) {
             return response()->json([
-                'msg' => 'Validation failed',
-                'errors' => $e->errors(),
+                'msg' => $e->errors(),
             ], 422);
         }
 
@@ -63,7 +62,7 @@ class CourseController extends Controller
         if (!$course) {
             return response()->json([
                 'msg' => 'Course not found'
-            ],451);
+            ],200);
         }
         return response()->json([
             'msg' => 'Course found',
@@ -82,8 +81,7 @@ class CourseController extends Controller
             ]);
         } catch (ValidationException $e) {
             return response()->json([
-                'msg' => 'Validation failed',
-                'errors' => $e->errors(),
+                'msg' => $e->errors(),
             ], 422);
         }
 

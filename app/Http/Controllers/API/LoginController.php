@@ -24,8 +24,7 @@ class LoginController extends Controller
         ]);
         } catch (ValidationException $e) {
             return response()->json([
-                'msg' => 'Validation failed',
-                'errors' => $e->errors(),
+                'msg' => $e->errors(),
             ], 422);
         }
 
@@ -34,7 +33,7 @@ class LoginController extends Controller
 
         if(!$user){
             $data = [
-                'msg' => 'Not Registered, Register first'
+                'msg' => 'Account not registered, register first'
             ];
             return response()->json($data,451);
         }
@@ -42,7 +41,7 @@ class LoginController extends Controller
         // Verify password
         if (!Hash::check($request->password, $user->password)) {
             $data = [
-                'msg' => 'Invalid Credentials'
+                'msg' => 'Invalid Password'
             ];
             return response()->json($data,401);
         }
@@ -77,8 +76,7 @@ class LoginController extends Controller
         ]);
         } catch (ValidationException $e) {
             return response()->json([
-                'msg' => 'Validation failed',
-                'errors' => $e->errors(),
+                'msg' => $e->errors(),
             ], 422);
         }
 
@@ -109,8 +107,7 @@ class LoginController extends Controller
             ]);
         } catch (ValidationException $e) {
             return response()->json([
-                'msg' => 'Validation failed',
-                'errors' => $e->errors(),
+                'msg' => $e->errors(),
             ], 422);
         }
 

@@ -17,8 +17,7 @@ class CourseImagesController extends Controller
         ]);
         } catch (ValidationException $e) {
             return response()->json([
-                'msg' => 'Validation failed', // Custom key
-                'errors' => $e->errors(), // Validation errors
+                'msg' => $e->errors(), // Validation errors
             ], 422);
         }
 
@@ -50,8 +49,8 @@ class CourseImagesController extends Controller
 
         if ($courseImages->isEmpty()) {
             return response()->json([
-                'msg' => 'No images found'
-            ], 451);
+                'msg' => 'No images available'
+            ], 200);
         }else{
             return response()->json([
                 'msg' => 'Images retrieved successfully',

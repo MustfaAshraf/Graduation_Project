@@ -33,8 +33,7 @@ class RecordController extends Controller
         ]);
         } catch (ValidationException $e) {
             return response()->json([
-                'msg' => 'Validation failed',
-                'errors' => $e->errors(),
+                'msg' => $e->errors(),
             ], 422);
         }
 

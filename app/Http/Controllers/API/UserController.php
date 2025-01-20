@@ -56,8 +56,7 @@ class UserController extends Controller
     
         } catch (\Illuminate\Validation\ValidationException $e) {
             $data = [
-                'msg' => 'Validation error',
-                'errors' => $e->errors()
+                'msg' => $e->errors()
             ];
             return response()->json($data,422);
         }

@@ -45,7 +45,8 @@ class UserController extends Controller
                 'semester' => $request->semester,
                 'department' => $request->department,
                 'gpa' => $request->gpa,
-                'university_code' => $request->university_code
+                'university_code' => $request->university_code,
+                'national_id' => $request->national_id
             ]);
     
 

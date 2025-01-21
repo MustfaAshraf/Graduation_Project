@@ -48,8 +48,7 @@ class LoginController extends Controller
 
         $is_completed = 1;
 
-        if (is_null($user->image) || is_null($user->semester) || is_null($user->department)
-                || is_null($user->gpa) || is_null($user->university_code)) {
+        if (is_null($user->name) || is_null($user->department) || is_null($user->national_id)) {
                 $is_completed = 0;
             }
 

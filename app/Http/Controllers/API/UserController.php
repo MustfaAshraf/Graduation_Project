@@ -17,7 +17,7 @@ class UserController extends Controller
                 'semester' => 'string|max:10',
                 'department' => 'required|string|max:255',
                 'gpa' => 'numeric|between:0,4.00',
-                'national_id' => 'nullable|string|unique:users,national_id'
+                'national_id' => 'required|string|unique:users,national_id'
             ]);
     
             $token = str_replace('Bearer ', '', $request->header('Authorization'));

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPasswordMail;
+use App\Mail\OTPMail;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -17,11 +18,11 @@ class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        try{
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'msg' => $e->errors(),
@@ -31,29 +32,45 @@ class LoginController extends Controller
         // Check if user exists
         $user = User::where('email', $request->email)->first();
 
-        if(!$user){
+        if (!$user) {
             $data = [
-                'msg' => 'Account not registered, register first'
+                'msg' => 'Account not registered, register first',
             ];
-            return response()->json($data,451);
+            return response()->json($data, 451);
         }
 
         // Verify password
         if (!Hash::check($request->password, $user->password)) {
             $data = [
-                'msg' => 'Invalid Password'
+                'msg' => 'Invalid Password',
             ];
-            return response()->json($data,401);
+            return response()->json($data, 401);
+        }
+
+        // Check if the account is verified
+        if (!$user->is_verified) {
+            // Generate a new OTP
+            $otp = Str::random(6);
+            $user->otp_code = $otp;
+            $user->otp_expires_at = Carbon::now()->addMinutes(3);
+            $user->save();
+
+            // Send the OTP via email
+            Mail::to($user->email)->send(new OTPMail($otp));
+
+            return response()->json([
+                'msg' => 'Account not verified. A new OTP has been sent to your email for verification.',
+            ], 403);
         }
 
         $is_completed = 1;
 
         if (is_null($user->name) || is_null($user->department) || is_null($user->national_id)) {
-                $is_completed = 0;
-            }
+            $is_completed = 0;
+        }
 
+        // Generate a new token for the user
         $token = Str::random(60);
-
         $user->token = $token;
         $user->save();
 
@@ -62,10 +79,11 @@ class LoginController extends Controller
             'msg' => 'Welcome, you are logged in',
             'token' => $token,
             'Is_Completed' => $is_completed,
-            'data' => $user
+            'data' => $user,
         ];
-        return response()->json($data,200);
+        return response()->json($data, 200);
     }
+
 
     public function sendResetLink(Request $request)
     {

@@ -5,21 +5,13 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
     public function storeUserData(Request $request)
     {
         try {
-            $request->validate([
-                'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-                'name' => 'required|string|max:255',
-                'semester' => 'string|max:10',
-                'department' => 'required|string|max:255',
-                'gpa' => 'numeric|between:0,4.00',
-                'national_id' => 'string|unique:users,national_id'
-            ]);
-
             $token = str_replace('Bearer ', '', $request->header('Authorization'));
 
             $user = User::where('token', $token)->first();
@@ -30,6 +22,18 @@ class UserController extends Controller
                 ];
                 return response()->json($data, 401);
             }
+
+            $request->validate([
+                'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'name' => 'required|string|max:255',
+                'semester' => 'string|max:10',
+                'department' => 'required|string|max:255',
+                'gpa' => 'numeric|between:0,4.00',
+                'national_id' => [
+                    'string',
+                    Rule::unique('users', 'national_id')->ignore($user->id)
+                ],
+            ]);
 
             $imgUrl = $user->image ? url('images/' . $user->image) : null;
 
@@ -49,7 +53,7 @@ class UserController extends Controller
                 'semester' => $request->semester,
                 'department' => $request->department,
                 'gpa' => $request->gpa,
-                'national_id' => $request->national_id
+                'national_id' => $request->national_id,
             ]);
 
             $data = [
@@ -61,8 +65,8 @@ class UserController extends Controller
                     'department' => $user->department,
                     'gpa' => $user->gpa,
                     'national_id' => $user->national_id,
-                    'image' => $imgUrl
-                ]
+                    'image' => $imgUrl,
+                ],
             ];
             return response()->json($data, 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -72,5 +76,6 @@ class UserController extends Controller
             return response()->json($data, 422);
         }
     }
+
 
 }

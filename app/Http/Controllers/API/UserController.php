@@ -19,26 +19,31 @@ class UserController extends Controller
                 'gpa' => 'numeric|between:0,4.00',
                 'national_id' => 'required|string|unique:users,national_id'
             ]);
-    
+
             $token = str_replace('Bearer ', '', $request->header('Authorization'));
-    
+
             $user = User::where('token', $token)->first();
 
-            if(!$user){
+            if (!$user) {
                 $data = [
                     'msg' => 'Invalid token, User not found'
                 ];
-                return response()->json($data,401);
+                return response()->json($data, 401);
             }
-    
-            if($request->hasFile('image')) {
 
-                $img = $request->file('image'); 
-                $imgName = rand() . time() . "." . $img->extension(); 
-                $destinationPath = public_path('images'); 
+            $imgUrl = $user->image ? url('images/' . $user->image) : null;
+
+            if ($request->hasFile('image')) {
+                $img = $request->file('image');
+                $imgName = rand() . time() . "." . $img->extension();
+                $destinationPath = public_path('images');
                 $img->move($destinationPath, $imgName);
+
+                // Update user image and URL
                 $user->update(['image' => $imgName]);
+                $imgUrl = url('images/' . $imgName);
             }
+
             $user->update([
                 'name' => $request->name,
                 'semester' => $request->semester,
@@ -46,19 +51,26 @@ class UserController extends Controller
                 'gpa' => $request->gpa,
                 'national_id' => $request->national_id
             ]);
-    
 
             $data = [
                 'msg' => 'Data completed successfully',
-                'data' => $user
+                'data' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'semester' => $user->semester,
+                    'department' => $user->department,
+                    'gpa' => $user->gpa,
+                    'national_id' => $user->national_id,
+                    'image_url' => $imgUrl
+                ]
             ];
-            return response()->json($data,200);
-    
+            return response()->json($data, 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $data = [
                 'msg' => $e->errors()
             ];
-            return response()->json($data,422);
+            return response()->json($data, 422);
         }
     }
+
 }

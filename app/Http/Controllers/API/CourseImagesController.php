@@ -35,7 +35,7 @@ class CourseImagesController extends Controller
 
             return response()->json([
                 'msg' => 'Image stored successfully',
-                'image_url' => $imageUrl,
+                'image' => $imageUrl,
             ], 200);
         } else {
             return response()->json([
@@ -58,7 +58,7 @@ class CourseImagesController extends Controller
             $courseImagesWithUrls = $courseImages->map(function ($image) {
                 return [
                     'id' => $image->id,
-                    'image_url' => url('courses_imgs/' . $image->image),
+                    'image' => url('courses_imgs/' . $image->image),
                     'created_at' => $image->created_at,
                     'updated_at' => $image->updated_at,
                 ];

@@ -54,7 +54,7 @@ class RecordController extends Controller
             'data' => [
                 'Student_Name' => $user->name,
                 'Academic_Year' => $user->semester,
-                'Receipt_URL' => $imgUrl
+                'Receipt' => $imgUrl
             ]
         ];
         return response()->json($data, 200);

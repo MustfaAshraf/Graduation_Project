@@ -23,7 +23,7 @@ class GetProfile extends Controller
             $imageUrl = $user->image ? url('images/' . $user->image) : null;
 
             return response()->json([
-                'image_url' => $imageUrl,
+                'image' => $imageUrl,
                 'name' => $user->name,
                 'semester' => $user->semester,
                 'department' => $user->department,

@@ -11,7 +11,7 @@ class CourseResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'image_url' => $this->image ? url('courses_imgs/' . $this->image) : null,
+            'image' => $this->image ? url('courses_imgs/' . $this->image) : null,
             'instructor' => $this->instructor,
             'price' => $this->price,
             'Rating Numbers' => $this->ratings_count,

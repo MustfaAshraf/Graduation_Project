@@ -17,7 +17,7 @@ class UserController extends Controller
                 'semester' => 'string|max:10',
                 'department' => 'required|string|max:255',
                 'gpa' => 'numeric|between:0,4.00',
-                'national_id' => 'required|string|unique:users,national_id'
+                'national_id' => 'string|unique:users,national_id'
             ]);
 
             $token = str_replace('Bearer ', '', $request->header('Authorization'));
@@ -61,7 +61,7 @@ class UserController extends Controller
                     'department' => $user->department,
                     'gpa' => $user->gpa,
                     'national_id' => $user->national_id,
-                    'image_url' => $imgUrl
+                    'image' => $imgUrl
                 ]
             ];
             return response()->json($data, 200);

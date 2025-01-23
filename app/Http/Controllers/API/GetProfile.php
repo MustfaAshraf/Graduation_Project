@@ -28,6 +28,7 @@ class GetProfile extends Controller
                 'semester' => $user->semester,
                 'department' => $user->department,
                 'gpa' => $user->gpa,
+                'university_id' => $user->university_id,
                 'national_id' => $user->national_id,
             ], 200);
         }

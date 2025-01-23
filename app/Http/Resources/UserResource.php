@@ -14,6 +14,7 @@ class UserResource extends JsonResource
             'semester' => $this->semester,
             'department' => $this->department,
             'gpa' => $this->gpa,
+            'university_id' => $this->university_id,
             'national_id' => $this->national_id,
             'image' => $this->image ? url('images/' . $this->image) : null,
             'otp' => $this->otp_code,

@@ -79,6 +79,7 @@ class LoginController extends Controller
             'msg' => $msg,
             'token' => $token,
             'Is_Completed' => $is_completed,
+            'is_verified' => $user->is_verified,
             'data' => new UserResource($user),
         ];
         return response()->json($data, 200);

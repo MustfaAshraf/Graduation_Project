@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPasswordMail;
@@ -31,6 +32,7 @@ class LoginController extends Controller
 
         // Check if user exists
         $user = User::where('email', $request->email)->first();
+        $msg = 'Welcome, you are logged in';
 
         if (!$user) {
             $data = [
@@ -58,9 +60,7 @@ class LoginController extends Controller
             // Send the OTP via email
             Mail::to($user->email)->send(new OTPMail($otp));
 
-            return response()->json([
-                'msg' => 'Account not verified. A new OTP has been sent to your email for verification.',
-            ], 403);
+            $msg = 'Account not verified, OTP sent to your email';
         }
 
         $is_completed = 1;
@@ -76,14 +76,13 @@ class LoginController extends Controller
 
         // Successful login response
         $data = [
-            'msg' => 'Welcome, you are logged in',
+            'msg' => $msg,
             'token' => $token,
             'Is_Completed' => $is_completed,
-            'data' => $user,
+            'data' => UserResource::collection($user),
         ];
         return response()->json($data, 200);
     }
-
 
     public function sendResetLink(Request $request)
     {

@@ -17,6 +17,7 @@ class UserResource extends JsonResource
             'national_id' => $this->national_id,
             'image' => $this->image ? url('images/' . $this->image) : null,
             'otp' => $this->otp_code,
+            'is_verified' => $this->is_verified
         ];
     }
 }

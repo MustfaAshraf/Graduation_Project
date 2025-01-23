@@ -79,7 +79,7 @@ class LoginController extends Controller
             'msg' => $msg,
             'token' => $token,
             'Is_Completed' => $is_completed,
-            'data' => UserResource::collection($user),
+            'data' => new UserResource($user),
         ];
         return response()->json($data, 200);
     }

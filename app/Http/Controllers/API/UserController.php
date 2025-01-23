@@ -29,6 +29,10 @@ class UserController extends Controller
                 'semester' => 'string|max:10',
                 'department' => 'required|string|max:255',
                 'gpa' => 'numeric|between:0,4.00',
+                'university_id' => [
+                    'string',
+                    Rule::unique('users', 'university_id')->ignore($user->id)
+                ],
                 'national_id' => [
                     'string',
                     Rule::unique('users', 'national_id')->ignore($user->id)
@@ -53,6 +57,7 @@ class UserController extends Controller
                 'semester' => $request->semester,
                 'department' => $request->department,
                 'gpa' => $request->gpa,
+                'university_id' => $request->university_id,
                 'national_id' => $request->national_id,
             ]);
 
@@ -64,6 +69,7 @@ class UserController extends Controller
                     'semester' => $user->semester,
                     'department' => $user->department,
                     'gpa' => $user->gpa,
+                    'university_id' => $user->university_id,
                     'national_id' => $user->national_id,
                     'image' => $imgUrl,
                 ],

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('semester')->nullable();
             $table->string('department')->nullable();
             $table->decimal('gpa', 3, 2)->nullable();
+            $table->string('university_id')->unique()->nullable();
             $table->string('national_id')->unique()->nullable();
             $table->string('otp_code')->nullable();
             $table->timestamp('otp_expires_at')->nullable();

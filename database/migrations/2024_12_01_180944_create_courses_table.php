@@ -10,15 +10,28 @@ return new class extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            
+            // English columns
+            $table->string('title_en');
+            $table->text('description_en');
+            $table->string('instructor_en');
+            $table->text('instructor_description_en');
+
+            // Arabic columns
+            $table->string('title_ar');
+            $table->text('description_ar');
+            $table->string('instructor_ar');
+            $table->text('instructor_description_ar');
+            
+            // Common columns
             $table->string('image');
-            $table->string('instructor');
             $table->decimal('price', 8, 2);
             $table->unsignedInteger('ratings_count')->default(0); 
             $table->decimal('ratings_sum', 10, 2)->default(0);
             $table->timestamps();
         });
     }
+
 
     public function down()
     {

@@ -10,14 +10,20 @@ class CourseResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
+            'title_en' => $this->title_en,
+            'description_en' => $this->description_en,
+            'title_ar' => $this->title_ar,
+            'description_ar' => $this->description_ar,
             'image' => $this->image ? url('courses_imgs/' . $this->image) : null,
-            'instructor' => $this->instructor,
+            'instructor_en' => $this->instructor_en,
+            'instructor_description_en' => $this->instructor_description_en,
+            'instructor_ar' => $this->instructor_ar,
+            'instructor_description_ar' => $this->instructor_description_ar,
             'price' => $this->price,
-            'Rating Numbers' => $this->ratings_count,
+            'ratings_count' => $this->ratings_count,
             'rating' => $this->ratings_count > 0 
                         ? round($this->ratings_sum / $this->ratings_count, 2) 
-                        : 0
+                        : 0,
         ];
     }
 

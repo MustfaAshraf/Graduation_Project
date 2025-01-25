@@ -141,9 +141,15 @@ class CourseController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'title' => 'required|string|max:255',
+                'title_en' => 'required|string|max:255',
+                'description_en' => 'required|string',
+                'instructor_en' => 'required|string|max:255',
+                'instructor_description_en' => 'required|string',
+                'title_ar' => 'required|string|max:255',
+                'description_ar' => 'required|string',
+                'instructor_ar' => 'required|string|max:255',
+                'instructor_description_ar' => 'required|string',
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'instructor' => 'required|string|max:255',
                 'price' => 'required|numeric|min:0',
             ]);
         } catch (ValidationException $e) {
@@ -152,26 +158,32 @@ class CourseController extends Controller
             ], 422);
         }
 
-        if($request->hasFile('image')) {
-
-            $img = $request->file('image'); 
-            $imgName = rand() . time() . "." . $img->extension(); 
-            $destinationPath = public_path('courses_imgs'); 
+        if ($request->hasFile('image')) {
+            $img = $request->file('image');
+            $imgName = rand() . time() . "." . $img->extension();
+            $destinationPath = public_path('courses_imgs');
             $img->move($destinationPath, $imgName);
         }
 
-        $course = course::create([
-            'title' => $validatedData['title'],
+        $course = Course::create([
+            'title_en' => $validatedData['title_en'],
+            'description_en' => $validatedData['description_en'],
+            'instructor_en' => $validatedData['instructor_en'],
+            'instructor_description_en' => $validatedData['instructor_description_en'],
+            'title_ar' => $validatedData['title_ar'],
+            'description_ar' => $validatedData['description_ar'],
+            'instructor_ar' => $validatedData['instructor_ar'],
+            'instructor_description_ar' => $validatedData['instructor_description_ar'],
             'image' => $imgName,
-            'instructor' => $validatedData['instructor'],
             'price' => $validatedData['price'],
         ]);
 
         return response()->json([
             'msg' => 'Course added successfully',
-            'data' => new CourseResource($course)
+            'data' => new CourseResource($course),
         ], 200);
     }
+
 
 
 }

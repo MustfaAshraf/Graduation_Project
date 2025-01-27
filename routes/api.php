@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\EnrollmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\RegisterController;
@@ -10,9 +11,7 @@ use App\Http\Controllers\API\CourseController;
 use App\Http\Controllers\API\GetProfile;
 
 use App\Http\Controllers\Api\RecordController;
-use App\Http\Controllers\API\CourseImagesController; 
-use App\Http\Controllers\API\Enrollment\EnrollmentController;
-
+use App\Http\Controllers\API\CourseImagesController;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

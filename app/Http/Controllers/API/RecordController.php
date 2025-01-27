@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Record;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class RecordController extends Controller
@@ -47,6 +48,16 @@ class RecordController extends Controller
             'student_name' => $user->name,
             'academic_year' => $user->semester,
             'receipt' => $imgName
+        ]);
+
+        // Store the request in the requests table
+        DB::table('requests')->insert([
+            'user_id' => $user->id,
+            'type' => 'Housing Request',
+            'status' => 'Pending',
+            'message' => 'Your request is under review',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $data = [

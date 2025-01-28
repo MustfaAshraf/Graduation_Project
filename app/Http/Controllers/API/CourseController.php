@@ -62,17 +62,6 @@ class CourseController extends Controller
             return response()->json($data,401);
         }
 
-        $existingRating = DB::table('ratings')
-        ->where('user_id', $user->id)
-        ->where('course_id', $request->id)
-        ->first();
-
-        if ($existingRating) {
-            return response()->json([
-                'msg' => 'You have already rated this course',
-            ], 409);
-        }
-
         DB::table('ratings')->insert([
             'user_id' => $user->id,
             'course_id' => $request->id,
@@ -129,8 +118,10 @@ class CourseController extends Controller
 
         if (!$rating) {
             return response()->json([
-                'msg' => 'No rating found for this course by the user',
-            ], 451);
+                'msg' => 'Course found',
+                'data' => new CourseResource($course),
+                'user rating' => 0
+            ],200);
         }
 
         return response()->json([

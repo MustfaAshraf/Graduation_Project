@@ -11,33 +11,55 @@ use PHPUnit\Framework\Constraint\IsEmpty;
 
 class UserRequestsController extends Controller
 {
-    public function fetchRequests(Request $request){
-        $token = str_replace('Bearer ', '', $request->header('Authorization'));
+    public function fetchRequests(Request $request)
+    {
+        $token = $request->header('Authorization');
+
+        // If no token is provided, return all requests (for admin dashboard)
+        if (!$token) {
+            $allRequests = DB::table('requests')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            if ($allRequests->isEmpty()) {
+                return response()->json([
+                    'msg' => 'No requests found',
+                    'data' => []
+                ], 200);
+            }
+
+            return response()->json([
+                'msg' => 'All Requests',
+                'data' => $allRequests
+            ], 200);
+        }
+
+        // Handle cases where a token is provided
+        $token = str_replace('Bearer ', '', $token);
         $user = User::where('token', $token)->first();
 
         if (!$user) {
-            $data = [
+            return response()->json([
                 'msg' => 'Invalid token, User not found'
-            ];
-            return response()->json($data, 401);
+            ], 401);
         }
 
         $existingRequests = DB::table('requests')
-        ->where('user_id', $user->id)
-        ->orderBy('created_at', 'desc')
-        ->get();
+            ->where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        if($existingRequests->isEmpty()){
+        if ($existingRequests->isEmpty()) {
             return response()->json([
                 'msg' => 'No requests found',
                 'data' => []
             ], 200);
-        } else {
-            return response()->json([
-                'msg' => 'Your Requests',
-                'data' => $existingRequests
-            ], 200);
         }
+
+        return response()->json([
+            'msg' => 'Your Requests',
+            'data' => $existingRequests
+        ], 200);
     }
 
     public function updateRequestStatus(Request $request)
@@ -64,9 +86,11 @@ class UserRequestsController extends Controller
         }
 
         if($request->status == 'Approved'){
-           $message = 'Your request has been approved';
+           $message_en = 'Your request has been approved';
+           $message_ar = 'طلبك تم الموافقة عليه';
         }else if($request->status == 'Rejected'){
-            $message = 'Your request has been rejected';
+            $message_en = 'Your request has been rejected';
+            $message_ar = 'طلبك تم رفضه';
         }
 
         // Update the request status and message
@@ -74,7 +98,8 @@ class UserRequestsController extends Controller
             ->where('id', $request->request_id)
             ->update([
                 'status' => $request->status,
-                'message' => $message,
+                'message_en' => $message_en,
+                'message_ar' => $message_ar,
                 'completed_at' => now()
             ]);
 
@@ -83,8 +108,11 @@ class UserRequestsController extends Controller
             'msg' => 'Request is completed successfully',
             'data' => [
                 'request_id' => $request->request_id,
+                'type_en' => $requestRecord->type_en,
+                'type_ar' => $requestRecord->type_ar,
                 'status' => $request->status,
-                'message' => $message,
+                'message_en' => $message_en,
+                'message_ar' => $message_ar,
                 'completed_at' => now()
             ]
         ], 200);

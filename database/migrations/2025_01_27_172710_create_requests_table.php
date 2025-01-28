@@ -11,9 +11,11 @@ return new class extends Migration
         Schema::create('requests', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('type');
+            $table->string('type_en');
+            $table->string('type_ar');
             $table->enum('status', ['Pending', 'Approved', 'Rejected'])->default('Pending');
-            $table->text('message')->nullable(); 
+            $table->text('message_en')->nullable();
+            $table->text('message_ar')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
 

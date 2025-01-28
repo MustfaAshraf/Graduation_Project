@@ -53,9 +53,11 @@ class RecordController extends Controller
         // Store the request in the requests table
         DB::table('requests')->insert([
             'user_id' => $user->id,
-            'type' => 'Housing Request',
+            'type_en' => 'Housing Request',
+            'type_ar' => 'طلب السكن الجامعي',
             'status' => 'Pending',
-            'message' => 'Your request is under review',
+            'message_en' => 'Your request is under review',
+            'message_ar' => 'طلبك قيد المراجعة',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

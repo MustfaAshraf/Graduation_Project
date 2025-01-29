@@ -13,6 +13,10 @@ use App\Http\Controllers\API\GetProfile;
 use App\Http\Controllers\Api\RecordController;
 use App\Http\Controllers\API\CourseImagesController;
 use App\Http\Controllers\API\UserRequestsController;
+use App\Http\Controllers\API\GradeStatementController;
+use App\Http\Controllers\API\PermitStatementController;
+use App\Http\Controllers\API\RankingController;
+
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -55,3 +59,14 @@ Route::post('/enroll', [EnrollmentController::class, 'store']);
 #User Requests
 Route::post('/requests', [UserRequestsController::class, 'fetchRequests']);
 Route::post('/update-request', [UserRequestsController::class, 'updateRequestStatus']);
+
+# Grade Request
+Route::post('/grade-Request', [GradeStatementController::class, 'getGradeStatement']);
+
+# permission Request
+Route::post('/permit-Request', [PermitStatementController::class, 'getPermitStatement']);
+
+# Ranking
+Route::post('/ranking', [RankingController::class, 'Ranking']);
+
+

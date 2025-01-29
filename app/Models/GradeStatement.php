@@ -11,5 +11,5 @@ class GradeStatement extends Model
 
     protected $table = 'grade_statements'; 
 
-    protected $fillable = ['purpose'];
+    protected $fillable = ['name', 'semester', 'university_id', 'purpose'];
 }

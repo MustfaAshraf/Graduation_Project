@@ -10,5 +10,5 @@ class PermitStatement extends Model
     use HasFactory;
 
     protected $table = 'permit_statements';
-    protected $fillable = ['purpose'];
+    protected $fillable = ['name', 'semester', 'university_id', 'purpose'];
 }

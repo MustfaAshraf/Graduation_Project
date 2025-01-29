@@ -31,7 +31,7 @@ class CourseController extends Controller
 
     public function addRating(Request $request)
     {
-        try{
+        try {
             $validatedData = $request->validate([
                 'id' => 'required|numeric',
                 'rating' => 'required|numeric|min:0|max:5',
@@ -52,31 +52,52 @@ class CourseController extends Controller
         }
 
         $token = str_replace('Bearer ', '', $request->header('Authorization'));
-    
         $user = User::where('token', $token)->first();
 
-        if(!$user){
-            $data = [
+        if (!$user) {
+            return response()->json([
                 'msg' => 'Invalid token, User not found'
-            ];
-            return response()->json($data,401);
+            ], 401);
         }
 
-        DB::table('ratings')->insert([
-            'user_id' => $user->id,
-            'course_id' => $request->id,
-            'rating' => $request->rating,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // Check if the user has already rated the course
+        $existingRating = DB::table('ratings')
+            ->where('user_id', $user->id)
+            ->where('course_id', $request->id)
+            ->first();
 
-        $course->ratings_sum += $validatedData['rating'];
-        $course->ratings_count += 1;
+        if ($existingRating) {
+            // Update the existing rating
+            DB::table('ratings')
+                ->where('user_id', $user->id)
+                ->where('course_id', $request->id)
+                ->update([
+                    'rating' => $validatedData['rating'],
+                    'updated_at' => now(),
+                ]);
+
+            // Adjust the course's rating sum
+            $course->ratings_sum = ($course->ratings_sum - $existingRating->rating) + $validatedData['rating'];
+        } else {
+            // Insert a new rating if not rated before
+            DB::table('ratings')->insert([
+                'user_id' => $user->id,
+                'course_id' => $request->id,
+                'rating' => $validatedData['rating'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Increase rating count
+            $course->ratings_sum += $validatedData['rating'];
+            $course->ratings_count += 1;
+        }
+
         $course->save();
 
         return response()->json([
             'msg' => 'Rating added successfully'
-        ],200);
+        ], 200);
     }
 
     public function showCourse(Request $request)

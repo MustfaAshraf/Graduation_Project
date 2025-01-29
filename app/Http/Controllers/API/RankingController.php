@@ -15,28 +15,27 @@ class RankingController extends Controller
         $user = User::where('token', $token)->first();
 
         if (!$user) {
-            return response()->json(['msg' => 'Invalid token, User not found'], 401);
+            return response()->json([
+                'msg' => 'Invalid token, User not found'
+            ], 401);
         }
 
-        $name = $user->name ?? 'N/A';
-        $semester = $user->semester ?? 'N/A';
-        $university_code = $user->university_code ?? 'N/A';
-        $gpa = $user->gpa ?? 0;
-
         $students = User::where('semester', $user->semester)
-            ->orderByDesc('gpa')
-            ->get();
+        ->whereNotNull('gpa')
+        ->orderByDesc('gpa')
+        ->get();    
 
         $rank = $students->search(fn($s) => $s->id === $user->id) + 1;
         $totalStudents = $students->count();
 
         return response()->json([
-            'name' => $name,
-            'semester' => $semester,
-            'university_code' => $university_code,
-            'gpa' => $gpa,
+            'name' => $user->name,
+            'semester' => $user->semester,
+            'department' => $user->department,
+            'university_id' => $user->university_id,
+            'gpa' => $user->gpa,
             'rank' => $rank,
             'total_students' => $totalStudents
-        ]);
+        ], 200);
     }
 }

@@ -16,7 +16,8 @@ use App\Http\Controllers\API\UserRequestsController;
 use App\Http\Controllers\API\GradeStatementController;
 use App\Http\Controllers\API\PermitStatementController;
 use App\Http\Controllers\API\RankingController;
-
+use App\Http\Controllers\API\RegulationFileController;
+use App\Http\Controllers\API\TimelineController;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -69,4 +70,10 @@ Route::post('/permit-Request', [PermitStatementController::class, 'getPermitStat
 # Ranking
 Route::post('/ranking', [RankingController::class, 'Ranking']);
 
+#Regulations
+Route::post('/upload-file', [RegulationFileController::class, 'UploadFile']);
+Route::get('/latest-file', [RegulationFileController::class, 'getLatestFile']);
 
+#Timeline
+Route::post('/create-or-update-timeline', [TimelineController::class, 'CreateOrUpdateTimeline']);
+Route::get('/timeline', [TimelineController::class, 'getTimeline']);

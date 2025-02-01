@@ -50,7 +50,7 @@ class LoginController extends Controller
         }
 
         // Check if the account is verified
-        if (!$user->is_verified) {
+        if (is_null($user->is_verified)) {
             // Generate a new OTP
             $otp = Str::random(6);
             $user->otp_code = $otp;
@@ -89,6 +89,7 @@ class LoginController extends Controller
         try{
         $request->validate([
             'email' => 'required|email|exists:users,email',
+            'type' => 'nullable|string|max:255',
         ]);
         } catch (ValidationException $e) {
             return response()->json([
@@ -98,20 +99,41 @@ class LoginController extends Controller
 
         $otp = Str::random(6);
 
-        DB::table('password_resets')->insert([
-            'email' => $request->email,
-            'otp_code' => $otp,
-            'otp_expires_at' => Carbon::now()->addMinutes(3),
-            'created_at' => now(),
-        ]);
+        if (is_null($request->type)) { // Password Reset Mail
+            DB::table('password_resets')->insert([
+                'email' => $request->email,
+                'otp_code' => $otp,
+                'otp_expires_at' => Carbon::now()->addMinutes(3),
+                'created_at' => now(),
+            ]);
+        
+            Mail::to($request->email)->send(new ResetPasswordMail($otp));
+        
+            return response()->json([
+                'msg' => 'OTP sent to your email for password reset',
+                'otp' => $otp
+            ], 200);
+        } else {  // Verification Mail
+            $user = User::where('email', $request->email)->first();
+        
+            if ($user) {  // Ensure user exists
+                $user->otp_code = $otp;
+                $user->otp_expires_at = Carbon::now()->addMinutes(3);
+                $user->save();
+        
+                Mail::to($request->email)->send(new OTPMail($otp));
+        
+                return response()->json([
+                    'msg' => 'OTP sent to your email for verification',
+                    'otp' => $otp
+                ], 200);
+            } else {
+                return response()->json([
+                    'msg' => 'User not found',
+                ], 451);
+            }
+        }
 
-        Mail::to($request->email)->send(new ResetPasswordMail($otp));
-
-        $data = [
-            'msg' => 'OTP sent to your email',
-            'otp' => $otp
-        ];
-        return response()->json($data,200);
     }
 
     public function resetPassword(Request $request)

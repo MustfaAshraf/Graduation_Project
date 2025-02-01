@@ -54,9 +54,15 @@ class RegisterController extends Controller
 
     public function verifyOTP(Request $request)
     {
+        try{
         $request->validate([
             'otp' => 'required|string|size:6',
         ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => $e->errors(),
+            ], 422);
+        }
 
         // Check in users table
         $user = User::where('otp_code', $request->otp)->first();

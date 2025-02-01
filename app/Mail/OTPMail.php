@@ -21,7 +21,7 @@ class OTPMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Your OTP Code',
+            subject: 'Verifiy Your Account',
         );
     }
 

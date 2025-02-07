@@ -52,7 +52,7 @@ class LoginController extends Controller
         // Check if the account is verified
         if (is_null($user->is_verified)) {
             // Generate a new OTP
-            $otp = Str::random(6);
+            $otp = mt_rand(100000, 999999);
             $user->otp_code = $otp;
             $user->otp_expires_at = Carbon::now()->addMinutes(3);
             $user->save();
@@ -97,7 +97,7 @@ class LoginController extends Controller
             ], 422);
         }
 
-        $otp = Str::random(6);
+        $otp = mt_rand(100000, 999999);
 
         if (is_null($request->type)) { // Password Reset Mail
             DB::table('password_resets')->insert([

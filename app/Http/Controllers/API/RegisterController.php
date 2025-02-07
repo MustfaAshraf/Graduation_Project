@@ -28,7 +28,7 @@ class RegisterController extends Controller
         }
 
         $token = Str::random(60);
-        $otp = Str::random(6);
+        $otp = mt_rand(100000, 999999); // Generates a 6-digit numeric OTP
 
         $user = User::create([
             'email' => $request->email,
@@ -49,8 +49,9 @@ class RegisterController extends Controller
                 'Token' => $token
             ]
         ];
-        return response()->json($data,200);
+        return response()->json($data, 200);
     }
+
 
     public function verifyOTP(Request $request)
     {

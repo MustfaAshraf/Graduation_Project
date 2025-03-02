@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\RecordController;
 use App\Http\Controllers\API\CourseImagesController;
 use App\Http\Controllers\API\UserRequestsController;
 use App\Http\Controllers\API\GradeStatementController;
+use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\PermitStatementController;
 use App\Http\Controllers\API\RankingController;
 use App\Http\Controllers\API\RegulationFileController;
@@ -70,10 +71,17 @@ Route::post('/permit-Request', [PermitStatementController::class, 'getPermitStat
 # Ranking
 Route::post('/ranking', [RankingController::class, 'Ranking']);
 
-#Regulations
+# Regulations
 Route::post('/upload-file', [RegulationFileController::class, 'UploadFile']);
 Route::get('/latest-file', [RegulationFileController::class, 'getLatestFile']);
 
-#Timeline
+# Timeline
 Route::post('/create-or-update-timeline', [TimelineController::class, 'CreateOrUpdateTimeline']);
 Route::get('/timeline', [TimelineController::class, 'getTimeline']);
+
+# Notifications
+Route::post('/notifications/send-to-user', [NotificationController::class, 'sendToUser']);
+Route::post('/notifications/send-to-all', [NotificationController::class, 'sendToAll']);
+Route::post('/notifications', [NotificationController::class, 'getUserNotifications']);
+Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
+Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);

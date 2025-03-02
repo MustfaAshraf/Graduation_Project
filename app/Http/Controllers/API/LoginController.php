@@ -21,6 +21,7 @@ class LoginController extends Controller
     {
         try {
             $request->validate([
+                'device_token' => 'nullable|string',
                 'email' => 'required|email',
                 'password' => 'required',
             ]);

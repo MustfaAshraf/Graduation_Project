@@ -18,6 +18,7 @@ class RegisterController extends Controller
     {
         try {
             $request->validate([
+                'device_token' => 'nullable|string',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|confirmed|min:6',
             ]);
@@ -36,6 +37,7 @@ class RegisterController extends Controller
             'otp_code' => $otp,
             'otp_expires_at' => Carbon::now()->addMinutes(3),
             'token' => $token,
+            'device_token' => $request->device_token,
             'is_verified' => false,
         ]);
 
@@ -46,7 +48,8 @@ class RegisterController extends Controller
             'data' => [
                 'email' => $user->email,
                 'OTP' => $user->otp_code,
-                'Token' => $token
+                'Token' => $token,
+                'Device_Token' => $user->device_token,
             ]
         ];
         return response()->json($data, 200);

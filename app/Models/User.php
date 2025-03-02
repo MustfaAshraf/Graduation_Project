@@ -13,7 +13,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
-        'image','name','email', 'password','semester','department','gpa','university_id', 'national_id', 'otp_code', 'otp_expires_at', 'is_verified' , 'token'
+        'image','name','email', 'password','semester','department','gpa','university_id', 'national_id', 'otp_code', 'otp_expires_at', 'is_verified' , 'token', 'device_token'
     ];
 
     protected $hidden = [
@@ -23,4 +23,9 @@ class User extends Authenticatable
     protected $casts = [
         //
     ];
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'device_token', 'device_token');
+    }
 }

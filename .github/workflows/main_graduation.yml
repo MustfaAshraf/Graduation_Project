@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy PHP app to Azure Web App - Graduation-Project
+name: Build and deploy PHP app to Azure Web App - Graduation
 
 on:
   push:
@@ -12,6 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -48,6 +50,7 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
       - name: Download artifact from build job
@@ -61,15 +64,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1A2668DE3621486F8AD9AE11E81516C5 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A6D5BE1C6C25429481EEDBA1AB4AA48D }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5A9516DDE2BD4A7D9D4DF7B9B81B7F28 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_17F8289BFC0549F494C104BB7C48D9EC }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_43971368FA874707BF52000AD0924655 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AD00B33AF3EF4858AD9E7928FFDA49E2 }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: 'Graduation-Project'
+          app-name: 'Graduation'
           slot-name: 'Production'
           package: .
           

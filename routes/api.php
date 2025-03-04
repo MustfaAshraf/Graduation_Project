@@ -12,6 +12,7 @@ use App\Http\Controllers\API\GetProfile;
 use App\Http\Controllers\Api\RecordController;
 use App\Http\Controllers\API\CourseImagesController; 
 use App\Http\Controllers\API\Enrollment\EnrollmentController;
+use App\Http\Controllers\API\EnrollmentStatsController;
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
@@ -51,3 +52,6 @@ Route::get('/all-images', [CourseImagesController::class, 'getImages']);
 
 #Enrollments
 Route::post('/enroll', [EnrollmentController::class, 'store']);
+
+#Enrollment Statistics
+Route::get('/enrollment-stats', [EnrollmentStatsController::class, 'getRequestsCount']);

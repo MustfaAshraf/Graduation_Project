@@ -15,5 +15,6 @@ class Enrollment extends Model
         'id_photo_f',
         'id_photo_b',
         'nomination_card_photo',
+        'status',
     ];
 }

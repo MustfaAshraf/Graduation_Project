@@ -5,21 +5,27 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Request;
 
+use function PHPUnit\Framework\isEmpty;
+
 class EnrollmentStatsController extends Controller
 {
     public function getRequestsCount()
     {
+        $msg = 'Requests retrieved successfully';
         // Count complete requests
         $completeCount = Request::where('status', 'Approved')->count();
         
         // Count waiting/incomplete requests
         $waitingCount = Request::where('status', 'Pending')->count();
-        
+
+        if(isEmpty($completeCount) && isEmpty($waitingCount)){
+            $msg = 'No requests found';
+        }
         return response()->json([
-            'msg' => 'Enrollment request counts retrieved successfully',
+            'msg' => $msg,
             'data' => [
-                'complete_requests' => $completeCount,
-                'waiting_requests' => $waitingCount
+                'Approved_Requests' => $completeCount ?? 0,
+                'Pending_Requests' => $waitingCount ?? 0
             ]
         ], 200);
     }

@@ -8,18 +8,13 @@ use Illuminate\Http\Request;
 
 class EnrollmentStatsController extends Controller
 {
-    /**
-     * Get the count of complete and incomplete enrollment requests
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function getRequestsCount()
     {
         // Count complete requests
-        $completeCount = Enrollment::where('status', 'complete')->count();
+        $completeCount = Enrollment::where('status', 'Approved')->count();
         
         // Count waiting/incomplete requests
-        $waitingCount = Enrollment::where('status', 'waiting')->count();
+        $waitingCount = Enrollment::where('status', 'Pending')->count();
         
         return response()->json([
             'msg' => 'Enrollment request counts retrieved successfully',

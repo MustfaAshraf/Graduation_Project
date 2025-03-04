@@ -11,7 +11,6 @@ use App\Http\Controllers\API\CourseController;
 use App\Http\Controllers\API\GetProfile;
 
 use App\Http\Controllers\Api\RecordController;
-use App\Http\Controllers\API\CourseImagesController;
 use App\Http\Controllers\API\UserRequestsController;
 use App\Http\Controllers\API\GradeStatementController;
 use App\Http\Controllers\API\NotificationController;
@@ -19,8 +18,7 @@ use App\Http\Controllers\API\PermitStatementController;
 use App\Http\Controllers\API\RankingController;
 use App\Http\Controllers\API\RegulationFileController;
 use App\Http\Controllers\API\TimelineController;
-use App\Http\Controllers\API\CourseImagesController; 
-use App\Http\Controllers\API\Enrollment\EnrollmentController;
+use App\Http\Controllers\API\CourseImagesController;
 use App\Http\Controllers\API\EnrollmentStatsController;
 
 

@@ -8,20 +8,18 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('enrollments', function (Blueprint $table) {
+        Schema::create('permit_statements', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('national_id');
-            $table->string('id_photo_f')->nullable();
-            $table->string('id_photo_b')->nullable();
-            $table->string('nomination_card_photo')->nullable();
+            $table->string('semester');
+            $table->string('university_id');
+            $table->string('purpose')->nullable();
             $table->timestamps();
         });
     }
+
     public function down()
     {
-        Schema::dropIfExists('enrollments');
-
-
+        Schema::dropIfExists('permit_statements');
     }
 };

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\EnrollmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\RegisterController;
@@ -10,6 +11,14 @@ use App\Http\Controllers\API\CourseController;
 use App\Http\Controllers\API\GetProfile;
 
 use App\Http\Controllers\Api\RecordController;
+use App\Http\Controllers\API\CourseImagesController;
+use App\Http\Controllers\API\UserRequestsController;
+use App\Http\Controllers\API\GradeStatementController;
+use App\Http\Controllers\API\NotificationController;
+use App\Http\Controllers\API\PermitStatementController;
+use App\Http\Controllers\API\RankingController;
+use App\Http\Controllers\API\RegulationFileController;
+use App\Http\Controllers\API\TimelineController;
 use App\Http\Controllers\API\CourseImagesController; 
 use App\Http\Controllers\API\Enrollment\EnrollmentController;
 use App\Http\Controllers\API\EnrollmentStatsController;
@@ -52,6 +61,37 @@ Route::get('/all-images', [CourseImagesController::class, 'getImages']);
 
 #Enrollments
 Route::post('/enroll', [EnrollmentController::class, 'store']);
+
+#User Requests
+Route::post('/requests', [UserRequestsController::class, 'fetchRequests']);
+Route::post('/update-request', [UserRequestsController::class, 'updateRequestStatus']);
+
+# Grade Request
+Route::post('/grade-Request', [GradeStatementController::class, 'getGradeStatement']);
+
+# permission Request
+Route::post('/permit-Request', [PermitStatementController::class, 'getPermitStatement']);
+
+# Ranking
+Route::post('/ranking', [RankingController::class, 'Ranking']);
+
+# Regulations
+Route::post('/upload-file', [RegulationFileController::class, 'UploadFile']);
+Route::get('/latest-file', [RegulationFileController::class, 'getLatestFile']);
+
+# Timeline
+Route::post('/create-or-update-timeline', [TimelineController::class, 'CreateOrUpdateTimeline']);
+Route::get('/timeline', [TimelineController::class, 'getTimeline']);
+
+# Notifications
+Route::post('/notifications/send-to-user', [NotificationController::class, 'sendToUser']);
+Route::post('/notifications/send-to-all', [NotificationController::class, 'sendToAll']);
+Route::post('/notifications', [NotificationController::class, 'getUserNotifications']);
+Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
+Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+
+# get requests
+Route::get('/requests/weekly-status', [UserRequestsController::class, 'getWeeklyRequestsStatus']);
 
 #Enrollment Statistics
 Route::get('/enrollment-stats', [EnrollmentStatsController::class, 'getRequestsCount']);

@@ -1,19 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\API\Enrollment;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
 class EnrollmentController extends Controller
 {
     public function store(Request $request)
     {
-
-
         // Validate the request
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -26,41 +22,35 @@ class EnrollmentController extends Controller
         // Store the uploaded files
         if ($request->hasFile('id_photo_f')) {
             $img = $request->file('id_photo_f');
-            $imgName = rand() . time() . "." . $img->extension();
+            $imgName_front = rand() . time() . "." . $img->extension();
             $destinationPath = public_path('enrollments/id_photo');
-            $img->move($destinationPath, $imgName);
-
-            // Update user image and URL
-            Enrollment::create(['id_photo_f' => $imgName]);
-            $imgUrl_front = url('enrollments/id_photo/' . $imgName);
+            $img->move($destinationPath, $imgName_front);
+            $imgUrl_front = url('enrollments/id_photo/' . $imgName_front);
         }
 
         if ($request->hasFile('id_photo_b')) {
             $img = $request->file(key: 'id_photo_b');
-            $imgName = rand() . time() . "." . $img->extension();
+            $imgName_back = rand() . time() . "." . $img->extension();
             $destinationPath = public_path('enrollments/id_photo');
-            $img->move($destinationPath, $imgName);
-
-            // Update user image and URL
-            Enrollment::create(['id_photo_b' => $imgName]);
-            $imgUrl_back = url('enrollments/id_photo/' . $imgName);
+            $img->move($destinationPath, $imgName_back);
+            $imgUrl_back = url('enrollments/id_photo/' . $imgName_back);
         }
 
         if ($request->hasFile('nomination_card_photo')) {
             $img = $request->file('nomination_card_photo');
-            $imgName = rand() . time() . "." . $img->extension();
+            $imgName_nomination = rand() . time() . "." . $img->extension();
             $destinationPath = public_path('enrollments/nomination_photo');
-            $img->move($destinationPath, $imgName);
-
-            // Update user image and URL
-            Enrollment::create(['nomination_card_photo' => $imgName]);
-            $imgUrl_nomination = url('images/' . $imgName);
+            $img->move($destinationPath, $imgName_nomination);
+            $imgUrl_nomination = url('images/' . $imgName_nomination);
         }
 
         // Create the enrollment record
         $enrollment = Enrollment::create([
             'name' => $validatedData['name'],
             'national_id' => $validatedData['national_id'],
+            'id_photo_f' => $imgName_front,
+            'id_photo_b' => $imgName_back,
+            'nomination_card_photo' => $imgName_nomination,
         ]);
 
         // Return the response with URLs for the uploaded images

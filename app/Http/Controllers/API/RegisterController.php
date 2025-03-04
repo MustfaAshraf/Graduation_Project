@@ -18,6 +18,7 @@ class RegisterController extends Controller
     {
         try {
             $request->validate([
+                'device_token' => 'nullable|string',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|confirmed|min:6',
             ]);
@@ -28,7 +29,7 @@ class RegisterController extends Controller
         }
 
         $token = Str::random(60);
-        $otp = Str::random(6);
+        $otp = mt_rand(100000, 999999); // Generates a 6-digit numeric OTP
 
         $user = User::create([
             'email' => $request->email,
@@ -36,6 +37,7 @@ class RegisterController extends Controller
             'otp_code' => $otp,
             'otp_expires_at' => Carbon::now()->addMinutes(3),
             'token' => $token,
+            'device_token' => $request->device_token,
             'is_verified' => false,
         ]);
 
@@ -46,17 +48,25 @@ class RegisterController extends Controller
             'data' => [
                 'email' => $user->email,
                 'OTP' => $user->otp_code,
-                'Token' => $token
+                'Token' => $token,
+                'Device_Token' => $user->device_token,
             ]
         ];
-        return response()->json($data,200);
+        return response()->json($data, 200);
     }
+
 
     public function verifyOTP(Request $request)
     {
+        try{
         $request->validate([
             'otp' => 'required|string|size:6',
         ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => $e->errors(),
+            ], 422);
+        }
 
         // Check in users table
         $user = User::where('otp_code', $request->otp)->first();

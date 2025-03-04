@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('otp_code')->nullable();
             $table->timestamp('otp_expires_at')->nullable();
             $table->string('token')->nullable();
+            $table->string('device_token')->nullable();
             $table->boolean('is_verified')->default(false);
             $table->timestamps();
         });

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id'); 
             $table->unsignedBigInteger('course_id'); 
-            $table->decimal('rating', 3, 2);
+            $table->decimal('rating', 3, 2)->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

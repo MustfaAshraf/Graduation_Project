@@ -79,6 +79,7 @@ class LoginController extends Controller
         $data = [
             'msg' => $msg,
             'token' => $token,
+            'device_token' => $user->device_token,
             'Is_Completed' => $is_completed,
             'data' => new UserResource($user),
         ];

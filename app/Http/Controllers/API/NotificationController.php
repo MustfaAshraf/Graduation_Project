@@ -106,9 +106,9 @@ class NotificationController extends Controller
     }
 
     # Mark a notification as read.
-    public function markAsRead($id)
+    public function markAsRead(Request $request)
     {
-        $notification = Notification::find($id);
+        $notification = Notification::find($request->id);
 
         if (!$notification) {
             return response()->json([

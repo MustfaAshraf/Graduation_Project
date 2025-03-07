@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Notification extends Model
 {
     protected $fillable = [
-        'device_token', 'title', 'body', 'data', 'read_at',
+        'id','device_token', 'title', 'body', 'data', 'read_at',
     ];
 
     protected $casts = [

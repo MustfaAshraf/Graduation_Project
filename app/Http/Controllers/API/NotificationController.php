@@ -23,10 +23,10 @@ class NotificationController extends Controller
     {
         try{
         $request->validate([
-            'device_token' => 'required|exists:users,device_token',
+            'device_token' => 'required|exists:users',
             'title' => 'required|string',
             'body' => 'required|string',
-            'data' => 'nullable|array',
+            'data' => 'required|array',
         ]);
         } catch (ValidationException $e) {
             return response()->json([
@@ -34,13 +34,13 @@ class NotificationController extends Controller
             ], 422);
         }
 
-        $deviceToken = $request->input('device_token');
+        $deviceToken = $request->device_token;
 
         $this->firebaseService->sendNotification(
             $deviceToken,
-            $request->input('title'),
-            $request->input('body'),
-            $request->input('data', [])
+            $request->title,
+            $request->body,
+            $request->data
         );
 
         return response()->json([

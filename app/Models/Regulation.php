@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Regulation extends Model
 {
     use HasFactory;
-    protected $fillable = ['file'];
+    protected $fillable = ['regulation', 'lectures_tables', 'academic_guide', 'teams_guide', 'postgraduate_guide', 'role'];
 }

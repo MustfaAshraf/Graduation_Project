@@ -10,7 +10,12 @@ return new class extends Migration
     {
         Schema::create('regulations', function (Blueprint $table) {
             $table->id();
-            $table->string('file');
+            $table->string('regulation');
+            $table->string('lectures_tables');
+            $table->string('academic_guide');
+            $table->string('teams_guide');
+            $table->string('postgraduate_guide');
+            $table->enum('role', ['1', '2', '3','4','5']);
             $table->timestamps();
         });
     }

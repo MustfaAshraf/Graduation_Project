@@ -40,10 +40,10 @@ class RegulationFileController extends Controller
             $column = $columnMap[$request->role];
     
             // Create new entry with dynamic column assignment
-            $regulation = new Regulation();
-            $regulation->$column = $fileName;
-            $regulation->role = $request->role; // Store the role as well
-            $regulation->save();
+            Regulation::create([
+                $columnMap[$request->role] => $fileName,
+                'role' => $request->role,
+            ]);
     
             $fileUrl = url('Files/' . $fileName);
     

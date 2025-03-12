@@ -37,8 +37,6 @@ class RegulationFileController extends Controller
                 '5' => 'postgraduate_guide',
             ];
     
-            $column = $columnMap[$request->role];
-    
             // Create new entry with dynamic column assignment
             Regulation::create([
                 $columnMap[$request->role] => $fileName,

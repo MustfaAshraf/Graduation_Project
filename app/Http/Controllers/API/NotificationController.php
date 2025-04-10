@@ -7,7 +7,9 @@ use App\Models\Notification;
 use App\Models\User;
 use App\Services\FirebaseNotificationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Kreait\Firebase\Exception\Messaging\NotFound;
 
 class NotificationController extends Controller
 {
@@ -51,12 +53,12 @@ class NotificationController extends Controller
     # Send a notification to all users.
     public function sendToAll(Request $request)
     {
-        try{
-        $request->validate([
-            'title' => 'required|string',
-            'body' => 'required|string',
-            'data' => 'nullable|array',
-        ]);
+        try {
+            $request->validate([
+                'title' => 'required|string',
+                'body' => 'required|string',
+                'data' => 'nullable|array',
+            ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'msg' => $e->errors()
@@ -64,13 +66,28 @@ class NotificationController extends Controller
         }
 
         $users = User::whereNotNull('device_token')->get();
+        $invalidTokens = [];
+
         foreach ($users as $user) {
-            $this->firebaseService->sendNotification(
-                $user->device_token,
-                $request->input('title'),
-                $request->input('body'),
-                $request->input('data', [])
-            );
+            try {
+                $this->firebaseService->sendNotification(
+                    $user->device_token,
+                    $request->input('title'),
+                    $request->input('body'),
+                    $request->input('data', [])
+                );
+            } catch (NotFound $e) {
+                // Log invalid token and optionally remove it from DB
+                $invalidTokens[] = $user->device_token;
+
+                Log::warning("Invalid Firebase token for user ID {$user->id}: {$user->device_token}");
+
+                // Optional: Remove the invalid token from the DB
+                // $user->device_token = null;
+                // $user->save();
+            } catch (\Exception $e) {
+                Log::error("Unexpected error sending notification to user ID {$user->id}: {$e->getMessage()}");
+            }
         }
 
         return response()->json([

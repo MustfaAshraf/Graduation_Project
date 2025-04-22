@@ -81,6 +81,7 @@ class LoginController extends Controller
             'token' => $token,
             'device_token' => $user->device_token,
             'Is_Completed' => $is_completed,
+            'role' => $user->role,
             'data' => new UserResource($user),
         ];
         return response()->json($data, 200);

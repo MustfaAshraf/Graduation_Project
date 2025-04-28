@@ -21,6 +21,7 @@ class RegisterController extends Controller
                 'device_token' => 'nullable|string',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|confirmed|min:6',
+                'role' => 'nullable|in:0,1',
             ]);
         } catch (ValidationException $e) {
             return response()->json([
@@ -39,6 +40,7 @@ class RegisterController extends Controller
             'token' => $token,
             'device_token' => $request->device_token,
             'is_verified' => false,
+            'role' => $request->role ?? 0,
         ]);
 
         Mail::to($user->email)->send(new OTPMail($otp));

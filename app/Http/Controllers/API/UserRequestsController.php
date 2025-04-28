@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RequestsResource;
+use App\Models\Request as ModelsRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -153,4 +155,22 @@ class UserRequestsController extends Controller
     ], 200);
 }
 
+    public function fetchAllRequests()
+    {
+        // Fetch all requests with their user info (eager loading to avoid N+1)
+        $requests = ModelsRequest::with('user')->get();
+
+        if ($requests->isEmpty()) {
+            return response()->json([
+                'msg' => 'No requests found.',
+                'data' => [],
+            ], 200);
+        }
+
+        // If you want to wrap it nicely (recommended)
+        return response()->json([
+            'msg' => 'All requests retrieved successfully',
+            'data' => RequestsResource::collection($requests),
+        ], 200);
+    }
 }

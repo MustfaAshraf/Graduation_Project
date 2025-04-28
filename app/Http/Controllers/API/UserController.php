@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -83,5 +84,21 @@ class UserController extends Controller
         }
     }
 
+    public function getAllUsers(Request $request)
+    {
+            // Fetch users and exclude some fields
+            $users = UserResource::collection(User::all());
 
+            if ($users->isEmpty()) {
+                return response()->json([
+                    'msg' => 'No users found.',
+                    'data' => [],
+                ], 200);
+            }
+
+            return response()->json([
+                'msg' => 'All users retrieved successfully.',
+                'data' => $users,
+            ], 200);
+    }
 }

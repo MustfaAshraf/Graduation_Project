@@ -37,6 +37,7 @@ Route::post('/reset-password', [LoginController::class, 'resetPassword']);
 
 # Users Data
 Route::post('/data', [UserController::class, 'storeUserData']);
+Route::post('/all-users', [UserController::class, 'getAllUsers']);
 
 # Logout
 Route::post('/logout', [LogoutController::class, 'logout']);
@@ -62,6 +63,7 @@ Route::post('/enroll', [EnrollmentController::class, 'store']);
 
 #User Requests
 Route::post('/requests', [UserRequestsController::class, 'fetchRequests']);
+Route::post('/all-requests', [UserRequestsController::class, 'fetchAllRequests']);
 Route::post('/update-request', [UserRequestsController::class, 'updateRequestStatus']);
 
 # Grade Request

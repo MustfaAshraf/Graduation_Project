@@ -199,6 +199,104 @@ class CourseController extends Controller
         ], 200);
     }
 
+    public function updateCourse(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'id' => 'required|numeric',
+                'title_en' => 'string|max:255',
+                'description_en' => 'string',
+                'instructor_en' => 'string|max:255',
+                'instructor_description_en' => 'string',
+                'title_ar' => 'string|max:255',
+                'description_ar' => 'string',
+                'instructor_ar' => 'string|max:255',
+                'instructor_description_ar' => 'string',
+                'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+                'price' => 'numeric|min:0',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => $e->errors(),
+            ], 422);
+        }
 
+        $course = Course::find($request->id);
 
+        if (!$course) {
+            return response()->json([
+                'msg' => 'Course not found',
+                'data' => []
+            ], 200);
+        }
+
+        // Handle image update if new image is provided
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($course->image) {
+                $oldImagePath = public_path('courses_imgs/' . $course->image);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            // Upload new image
+            $img = $request->file('image');
+            $imgName = rand() . time() . "." . $img->extension();
+            $destinationPath = public_path('courses_imgs');
+            $img->move($destinationPath, $imgName);
+            $validatedData['image'] = $imgName;
+        }
+
+        // Update only the fields that are present in the request
+        $course->update(array_filter($validatedData, function ($value) {
+            return $value !== null;
+        }));
+
+        return response()->json([
+            'msg' => 'Course updated successfully',
+            'data' => new CourseResource($course),
+        ], 200);
+    }
+
+    public function deleteCourse(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'id' => 'required|numeric',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => $e->errors(),
+            ], 422);
+        }
+
+        $course = Course::find($request->id);
+
+        if (!$course) {
+            return response()->json([
+                'msg' => 'Course not found',
+                'data' => []
+            ], 200);
+        }
+
+        // Delete course image if exists
+        if ($course->image) {
+            $imagePath = public_path('courses_imgs/' . $course->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
+        // Delete related ratings
+        DB::table('ratings')->where('course_id', $request->id)->delete();
+
+        // Delete the course
+        $course->delete();
+
+        return response()->json([
+            'msg' => 'Course deleted successfully',
+            'data' => []
+        ], 200);
+    }
 }

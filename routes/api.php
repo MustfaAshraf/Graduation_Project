@@ -46,8 +46,9 @@ Route::get('/all-courses', [CourseController::class, 'show']);
 Route::post('/rating', [CourseController::class, 'addRating']);
 Route::post('/course/add', [CourseController::class, 'addCourse']);
 Route::post('/course', [CourseController::class, 'showCourse']);
+Route::post('/update-course', [CourseController::class, 'updateCourse']);
+Route::post('/delete-course', [CourseController::class, 'deleteCourse']);
 
-// User profile
 Route::post('/user-data', [GetProfile::class, 'getUserInfo']);
 
 # Record
@@ -93,3 +94,4 @@ Route::get('/requests/weekly-status', [UserRequestsController::class, 'getWeekly
 
 #Enrollment Statistics
 Route::get('/enrollment-stats', [EnrollmentStatsController::class, 'getRequestsCount']);
+

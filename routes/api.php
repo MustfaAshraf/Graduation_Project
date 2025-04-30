@@ -102,5 +102,8 @@ Route::post('/write-complaint', [ComplaintController::class, 'store']);
 # Complaints Listing (Admin)
 Route::get('/complaints', [ComplaintController::class, 'index']);
 # Complaint Reply (Admin)
-Route::post('/reply-complaint', [ComplaintController::class, 'reply']);
+Route::post('/reply-complaint/{id}', [ComplaintController::class, 'reply']);
+// Get complaints by specific user ID (admin )
+Route::get('/user-complaints/{user_id}', [ComplaintController::class, 'complaintsByUser']);
+
 

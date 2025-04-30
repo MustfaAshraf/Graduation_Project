@@ -84,4 +84,15 @@ class ComplaintController extends Controller
             'data' => $complaint
         ],200);
     }
+    public function complaintsByUser($user_id)
+    {
+        $complaints = Complaint::where('user_id', $user_id)->latest()->get()->makeHidden(['user_id']);;
+
+        if ($complaints->isEmpty()) {
+            return response()->json(['message' => 'No complaints found for this user.'], 404);
+        }
+
+        return response()->json($complaints);
+    }
+
 }

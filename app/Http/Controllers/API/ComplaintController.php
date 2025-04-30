@@ -16,7 +16,9 @@ class ComplaintController extends Controller
 
         // Check if the user exists
         if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json([
+                'msg' => 'User Not Found'
+            ], 451);
         }
 
         // Validate complaint input only
@@ -32,22 +34,32 @@ class ComplaintController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Complaint submitted successfully',
+            'msg' => 'Complaint submitted successfully',
             'data' => $complaint,
-        ], 201);
+        ], 200);
     }
 
     public function index()
     {
         // Retrieve all complaints ordered by latest
         $complaints = Complaint::latest()->get();
-        return response()->json($complaints);
+        if ($complaints->isEmpty()) {
+            return response()->json([
+                'msg' => 'No complaints found',
+                'data' => [],
+            ], 200);
+        }
+        return response()->json([
+            'msg' => 'Complaints retrieved successfully',
+            'data' => $complaints
+        ],200);
     }
 
     public function reply(Request $request, $id)
     {
         // Validate the response input
         $request->validate([
+            'id' => 'required|numeric',
             'response' => 'required|string',
         ]);
 
@@ -55,7 +67,10 @@ class ComplaintController extends Controller
         $complaint = Complaint::find($id);
 
         if (!$complaint) {
-            return response()->json(['message' => 'Complaint not found'], 404);
+            return response()->json([
+                'msg' => 'Complaint not found',
+                'data' => [],
+                ], 200);
         }
 
         // Update complaint with admin response and change status
@@ -65,9 +80,9 @@ class ComplaintController extends Controller
         $complaint->save();
 
         return response()->json([
-            'message' => 'Complaint has been responded to and status updated',
+            'msg' => 'Complaint has been responded to and status updated',
             'data' => $complaint
-        ]);
+        ],200);
     }
     public function complaintsByUser($user_id)
     {

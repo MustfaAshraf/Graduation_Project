@@ -20,6 +20,7 @@ use App\Http\Controllers\API\RegulationFileController;
 use App\Http\Controllers\API\TimelineController;
 use App\Http\Controllers\API\CourseImagesController;
 use App\Http\Controllers\API\EnrollmentStatsController;
+use App\Http\Controllers\API\ComplaintController;
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
@@ -95,3 +96,10 @@ Route::get('/requests/weekly-status', [UserRequestsController::class, 'getWeekly
 
 #Enrollment Statistics
 Route::get('/enrollment-stats', [EnrollmentStatsController::class, 'getRequestsCount']);
+# Complaints
+Route::post('/write-complaint', [ComplaintController::class, 'store']);
+# Complaints Listing (Admin)
+Route::get('/complaints', [ComplaintController::class, 'index']);
+# Complaint Reply (Admin)
+Route::post('/reply-complaint/{id}', [ComplaintController::class, 'reply']);
+

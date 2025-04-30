@@ -17,7 +17,7 @@ class ComplaintController extends Controller
         // Check if the user exists
         if (!$user) {
             return response()->json([
-                'msg' => 'User Not Found'
+                'msg' => 'Invalid Token, User Not Found'
             ], 451);
         }
 

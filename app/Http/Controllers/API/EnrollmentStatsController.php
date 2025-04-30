@@ -14,7 +14,7 @@ class EnrollmentStatsController extends Controller
         $msg = 'Requests retrieved successfully';
         // Count complete requests
         $completeCount = Request::where('status', 'Approved')->count();
-        
+
         // Count waiting/incomplete requests
         $waitingCount = Request::where('status', 'Pending')->count();
 

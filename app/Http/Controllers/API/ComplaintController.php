@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Complaint;
 use App\Models\User;
+use Illuminate\Validation\ValidationException;
 
 class ComplaintController extends Controller
 {
@@ -116,4 +117,57 @@ class ComplaintController extends Controller
         ], 200);
     }
 
+    public function delete(Request $request)
+    {
+        // Validate the complaint ID input
+        $request->validate([
+            'id' => 'required|numeric',
+        ]);
+
+        // Find the complaint by ID
+        $complaint = Complaint::find($request->id);
+
+        if (!$complaint) {
+            return response()->json([
+                'msg' => 'Complaint not found',
+                'data' => [],
+            ], 200);
+        }
+
+        // Delete the complaint
+        $complaint->delete();
+
+        return response()->json([
+            'msg' => 'Complaint deleted successfully',
+            'data' => [],
+        ], 200);
+    }
+
+    public function update(Request $request)
+    {
+        try{
+        $request->validate([
+            'id' => 'required|exists:complaints,id',
+            'response' => 'required|string',
+            'status' => 'required|in:pending,approved'
+        ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => $e->errors(),
+            ], 422);
+        } 
+    
+        $complaint = Complaint::find($request->id);
+        
+        $complaint->update([
+            'response' => $request->response,
+            'status' => $request->status,
+            'response_time' => now()
+        ]);
+    
+        return response()->json([
+            'message' => 'Complaint updated successfully.',
+            'data' => $complaint
+        ]);
+    }
 }

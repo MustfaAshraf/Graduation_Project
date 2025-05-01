@@ -15,7 +15,10 @@ return new class extends Migration
             $table->string('academic_guide')->nullable();
             $table->string('teams_guide')->nullable();
             $table->string('postgraduate_guide')->nullable();
-            $table->enum('role', ['1', '2', '3','4','5'])->nullable();
+            $table->string('ai_regulation')->nullable();
+            $table->string('cybersecurity_regulation')->nullable();
+            $table->string('medical_regulation')->nullable();
+            $table->enum('role', ['1', '2', '3','4','5','6','7','8'])->nullable();
             $table->timestamps();
         });
     }

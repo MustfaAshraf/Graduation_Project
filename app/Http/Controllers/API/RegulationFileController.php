@@ -13,7 +13,7 @@ class RegulationFileController extends Controller
         try {
             $request->validate([
                 'file' => 'required|mimes:pdf|max:5120', // Only allow PDF files, max 5MB
-                'role' => 'required|in:1,2,3,4,5', // Ensure role is one of the predefined values
+                'role' => 'required|in:1,2,3,4,5,6,7,8', // Ensure role is one of the predefined values
             ]);
         } catch (ValidationException $e) {
             return response()->json([
@@ -35,6 +35,9 @@ class RegulationFileController extends Controller
                 '3' => 'academic_guide',
                 '4' => 'teams_guide',
                 '5' => 'postgraduate_guide',
+                '6' => 'ai_regulation',
+                '7' => 'cybersecurity_regulation',
+                '8' => 'medical_regulation',
             ];
     
             // Create new entry with dynamic column assignment
@@ -58,7 +61,7 @@ class RegulationFileController extends Controller
 
     public function getLatestFile(Request $request) {
         $request->validate([
-            'role' => 'required|in:1,2,3,4,5', // Ensure role is valid
+            'role' => 'required|in:1,2,3,4,5,6,7,8', // Ensure role is valid
         ]);
     
         // Map role to the corresponding column
@@ -68,6 +71,9 @@ class RegulationFileController extends Controller
             '3' => 'academic_guide',
             '4' => 'teams_guide',
             '5' => 'postgraduate_guide',
+            '6' => 'ai_regulation',
+            '7' => 'cybersecurity_regulation',
+            '8' => 'medical_regulation',
         ];
     
         $column = $columnMap[$request->role];

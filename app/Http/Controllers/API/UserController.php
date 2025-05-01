@@ -7,6 +7,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -100,5 +101,98 @@ class UserController extends Controller
                 'msg' => 'All users retrieved successfully.',
                 'data' => $users,
             ], 200);
+    }
+
+    public function addUser(Request $request)
+    {
+        try{
+        $request->validate([
+            'role' => 'required|in:0,1',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+        ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => $e->errors(),
+            ], 422);
+        }
+
+        $user = User::create([
+            'role' => $request->role,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        return response()->json([
+            'msg' => 'User added successfully.',
+            'data' => new UserResource($user),
+        ], 200);
+    }
+
+    public function updateUser(Request $request)
+    {
+        try{
+        $request->validate([
+            'id' => 'required|exists:users,id',
+            'role' => 'nullable|in:0,1',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:users,email,',
+            'university_id' => 'nullable|unique:users,university_id,',
+            'national_id' => 'nullable|unique:users,national_id,',
+            'gpa' => 'nullable|numeric|between:0,4.00',
+            'semester' => 'nullable|string|max:10',
+            'department' => 'nullable|string|max:255',
+        ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => $e->errors(),
+            ], 422);
+        }
+
+        $user = User::find($request->id);
+
+        if ($request->hasFile('image')) {
+            $img = $request->file('image');
+            $imgName = rand() . time() . "." . $img->extension();
+            $destinationPath = public_path('images');
+            $img->move($destinationPath, $imgName);
+
+            // Update user image
+            $user->update(['image' => $imgName]);
+        }
+
+        $user->update($request->only([
+            'role', 'name', 'email', 'semester', 'department',
+            'gpa', 'university_id', 'national_id'
+        ]));
+
+        return response()->json([
+            'msg' => 'User updated successfully.',
+            'data' => new UserResource($user),
+        ], 200);
+    }
+
+    public function deleteUser(Request $request)
+    {
+        // Validate the request
+        try{
+            $request->validate([
+                'id' => 'required|exists:users,id',
+            ]);
+            } catch (ValidationException $e) {
+                return response()->json([
+                    'msg' => $e->errors(),
+                ], 422);
+            }
+
+        // Find and delete the user
+        $user = User::find($request->id);
+
+        $user->delete();
+
+        return response()->json([
+            'msg' => 'User deleted successfully.'
+        ], 200);
     }
 }

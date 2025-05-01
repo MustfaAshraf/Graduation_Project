@@ -39,6 +39,9 @@ Route::post('/reset-password', [LoginController::class, 'resetPassword']);
 # Users Data
 Route::post('/data', [UserController::class, 'storeUserData']);
 Route::post('/all-users', [UserController::class, 'getAllUsers']);
+Route::post('/users/add', [UserController::class, 'addUser']);
+Route::post('/users/update', [UserController::class, 'updateUser']);
+Route::post('/users/delete', [UserController::class, 'deleteUser']);
 
 # Logout
 Route::post('/logout', [LogoutController::class, 'logout']);
@@ -103,5 +106,7 @@ Route::post('/write-complaint', [ComplaintController::class, 'store']);
 Route::get('/complaints', [ComplaintController::class, 'index']);
 Route::post('/reply-complaint', [ComplaintController::class, 'reply']);
 Route::post('/user-complaints', [ComplaintController::class, 'complaintsByUser']);
+Route::post('/complaint/update', [ComplaintController::class, 'update']);
+Route::post('/complaint/delete', [ComplaintController::class, 'delete']);
 
 

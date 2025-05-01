@@ -55,7 +55,7 @@ class ComplaintController extends Controller
         ],200);
     }
 
-    public function reply(Request $request, $id)
+    public function reply(Request $request)
     {
         // Validate the response input
         $request->validate([
@@ -64,7 +64,7 @@ class ComplaintController extends Controller
         ]);
 
         // Find the complaint by ID
-        $complaint = Complaint::find($id);
+        $complaint = Complaint::find($request->id);
 
         if (!$complaint) {
             return response()->json([
@@ -84,15 +84,35 @@ class ComplaintController extends Controller
             'data' => $complaint
         ],200);
     }
-    public function complaintsByUser($user_id)
+    public function complaintsByUser(Request $request)
     {
-        $complaints = Complaint::where('user_id', $user_id)->latest()->get()->makeHidden(['user_id']);;
+        $token = str_replace('Bearer ', '', $request->header('Authorization'));
+        $user = User::where('token', $token)->first();
 
-        if ($complaints->isEmpty()) {
-            return response()->json(['message' => 'No complaints found for this user.'], 404);
+        // Check if the user exists
+        if (!$user) {
+            return response()->json([
+                'msg' => 'User Not Found'
+            ], 451);
         }
 
-        return response()->json($complaints);
+        $complaints = Complaint::where('user_id', $user->id)
+        ->latest()
+        ->get()
+        ->makeHidden(['user_id']);
+
+        if ($complaints->isEmpty()) {
+            return response()->json(
+                [
+                    'msg' => 'No complaints found for this user.',
+                    'data' => [],
+                    ], 200);
+        }
+
+        return response()->json([
+            'msg' => 'Complaints retrieved successfully',
+            'data' => $complaints
+        ], 200);
     }
 
 }

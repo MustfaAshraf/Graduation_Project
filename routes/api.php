@@ -53,6 +53,7 @@ Route::post('/user-data', [GetProfile::class, 'getUserInfo']);
 
 # Record
 Route::post('/university-requests', [RecordController::class, 'store']);
+Route::get('/housing-requests', [RecordController::class, 'index']);
 
 #CoursesImages
 Route::post('/images/add', [CourseImagesController::class, 'uploadImage']);
@@ -60,6 +61,7 @@ Route::get('/all-images', [CourseImagesController::class, 'getImages']);
 
 #Enrollments
 Route::post('/enroll', [EnrollmentController::class, 'store']);
+Route::get('/enrollments', [EnrollmentController::class, 'index']);
 
 #User Requests
 Route::post('/requests', [UserRequestsController::class, 'fetchRequests']);
@@ -67,9 +69,11 @@ Route::post('/update-request', [UserRequestsController::class, 'updateRequestSta
 
 # Grade Request
 Route::post('/grade-Request', [GradeStatementController::class, 'getGradeStatement']);
+Route::get('/grade-statements', [GradeStatementController::class, 'index']);
 
 # permission Request
 Route::post('/permit-Request', [PermitStatementController::class, 'getPermitStatement']);
+Route::get('/permit-statements', [PermitStatementController::class, 'index']);
 
 # Ranking
 Route::post('/ranking', [RankingController::class, 'Ranking']);

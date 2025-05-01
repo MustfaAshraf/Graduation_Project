@@ -111,6 +111,7 @@ class ComplaintController extends Controller
 
         return response()->json([
             'msg' => 'Complaints retrieved successfully',
+            'national_id' => $user->national_id,
             'data' => $complaints
         ], 200);
     }

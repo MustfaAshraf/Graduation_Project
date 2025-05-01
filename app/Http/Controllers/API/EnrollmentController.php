@@ -8,6 +8,34 @@ use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
 {
+    public function index()
+    {
+        try {
+            $enrollments = Enrollment::all()->map(function ($enrollment) {
+                return [
+                    'id' => $enrollment->id,
+                    'name' => $enrollment->name,
+                    'national_id' => $enrollment->national_id,
+                    'id_photo_f' => url('enrollments/id_photo/' . $enrollment->id_photo_f),
+                    'id_photo_b' => url('enrollments/id_photo/' . $enrollment->id_photo_b),
+                    'nomination_card_photo' => url('images/' . $enrollment->nomination_card_photo),
+                    'created_at' => $enrollment->created_at,
+                ];
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $enrollments
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve enrollment requests',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         // Validate the request

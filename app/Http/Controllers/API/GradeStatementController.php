@@ -58,4 +58,32 @@ class GradeStatementController extends Controller
             'data' => $gradeStatement
         ], 200);
     }
+
+    public function index(): JsonResponse
+    {
+        try {
+            $gradeStatements = GradeStatement::all()->map(function ($statement) {
+                return [
+                    'id' => $statement->id,
+                    'name' => $statement->name,
+                    'semester' => $statement->semester,
+                    'university_id' => $statement->university_id,
+                    'purpose' => $statement->purpose,
+                    'created_at' => $statement->created_at,
+                    'updated_at' => $statement->updated_at
+                ];
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $gradeStatements
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve grade statement requests',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

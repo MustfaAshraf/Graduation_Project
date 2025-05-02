@@ -107,20 +107,32 @@ class NotificationController extends Controller
             ], 401);
         }
 
-        $notifications = Notification::where('device_token', $user->device_token)->paginate(10);
+        // Retrieve notifications (cloned before update)
+        $notifications = Notification::where('device_token', $user->device_token)
+                                    ->orderBy('created_at', 'desc')
+                                    ->paginate(10);
 
-        if($notifications->isEmpty()) {
+        if ($notifications->isEmpty()) {
             return response()->json([
                 'msg' => 'No notifications found for this user',
                 'notifications' => []
-            ], 401);
+            ], 200);
         }
+
+        // Clone notifications before updating
+        $responseNotifications = clone $notifications;
+
+        // Mark unread ones as read (after cloning to preserve original states)
+        Notification::where('device_token', $user->device_token)
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
 
         return response()->json([
             'msg' => 'User notifications retrieved successfully',
-            'notifications' => $notifications
+            'notifications' => $responseNotifications
         ]);
     }
+
 
     # Mark a notification as read.
     public function markAsRead(Request $request)

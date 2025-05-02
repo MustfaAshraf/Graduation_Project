@@ -74,16 +74,21 @@ class PermitStatementController extends Controller
                 ];
             });
 
+            if ($permitStatements->isEmpty()) {
+                return response()->json([
+                    'msg' => 'No permit statement requests found',
+                    'data' => []
+                ], 200);
+            }
+
             return response()->json([
-                'status' => 'success',
+                'msg' => 'Permit statement requests retrieved successfully',
                 'data' => $permitStatements
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to retrieve permit statement requests',
-                'error' => $e->getMessage()
-            ], 500);
+                'msg' => $e->getMessage()
+            ], 422);
         }
     }
 }

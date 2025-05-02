@@ -74,7 +74,7 @@ class RecordController extends Controller
         return response()->json($data, 200);
     }
 
-    public function index(): JsonResponse
+    public function index()
     {
         try {
             $records = Record::all()->map(function ($record) {
@@ -88,16 +88,21 @@ class RecordController extends Controller
                 ];
             });
 
+            if ($records->isEmpty()) {
+                return response()->json([
+                    'msg' => 'No housing requests found',
+                    'data' => []
+                ], 200);
+            }
+
             return response()->json([
-                'status' => 'success',
+                'msg' => 'Housing requests retrieved successfully',
                 'data' => $records
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to retrieve housing requests',
-                'error' => $e->getMessage()
-            ], 500);
+                'msg' => $e->getMessage()
+            ], 422);
         }
     }
 }

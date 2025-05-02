@@ -231,7 +231,7 @@ class CourseController extends Controller
         }
 
         // Handle image update if new image is provided
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('image') && $request->file('image') !== null) {
             // Delete old image if exists
             if ($course->image) {
                 $oldImagePath = public_path('courses_imgs/' . $course->image);
@@ -246,6 +246,8 @@ class CourseController extends Controller
             $destinationPath = public_path('courses_imgs');
             $img->move($destinationPath, $imgName);
             $validatedData['image'] = $imgName;
+        } else {
+            unset($validatedData['image']);
         }
 
         // Update only the fields that are present in the request

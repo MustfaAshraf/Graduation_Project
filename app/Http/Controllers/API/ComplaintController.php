@@ -19,7 +19,7 @@ class ComplaintController extends Controller
         if (!$user) {
             return response()->json([
                 'msg' => 'Invalid Token, User Not Found'
-            ], 451);
+            ], 401);
         }
 
         // Validate complaint input only
@@ -93,8 +93,8 @@ class ComplaintController extends Controller
         // Check if the user exists
         if (!$user) {
             return response()->json([
-                'msg' => 'User Not Found'
-            ], 451);
+                'msg' => 'Invalid Token, User Not Found'
+            ], 401);
         }
 
         $complaints = Complaint::where('user_id', $user->id)

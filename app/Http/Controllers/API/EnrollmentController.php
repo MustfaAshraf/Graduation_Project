@@ -23,16 +23,21 @@ class EnrollmentController extends Controller
                 ];
             });
 
+            if ($enrollments->isEmpty()) {
+                return response()->json([
+                    'msg' => 'No enrollment requests found',
+                    'data' => []
+                ], 200);
+            }
+
             return response()->json([
-                'status' => 'success',
+                'msg' => 'Enrollment requests retrieved successfully',
                 'data' => $enrollments
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to retrieve enrollment requests',
-                'error' => $e->getMessage()
-            ], 500);
+                'msg' => $e->getMessage()
+            ], 422);
         }
     }
 

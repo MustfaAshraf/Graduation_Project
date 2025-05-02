@@ -59,7 +59,7 @@ class GradeStatementController extends Controller
         ], 200);
     }
 
-    public function index(): JsonResponse
+    public function index()
     {
         try {
             $gradeStatements = GradeStatement::all()->map(function ($statement) {
@@ -73,17 +73,22 @@ class GradeStatementController extends Controller
                     'updated_at' => $statement->updated_at
                 ];
             });
+            
+            if ($gradeStatements->isEmpty()) {
+                return response()->json([
+                    'msg' => 'No grade statement requests found',
+                    'data' => []
+                ], 200);
+            }
 
             return response()->json([
-                'status' => 'success',
+                'msg' => 'Grade statement requests retrieved successfully',
                 'data' => $gradeStatements
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to retrieve grade statement requests',
-                'error' => $e->getMessage()
-            ], 500);
+                'msg' => $e->getMessage()
+            ], 422);
         }
     }
 }

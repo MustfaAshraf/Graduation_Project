@@ -23,31 +23,44 @@ class NotificationController extends Controller
     # Send a notification to a specific user.
     public function sendToUser(Request $request)
     {
-        try{
-        $request->validate([
-            'device_token' => 'required|exists:users',
-            'title' => 'required|string',
-            'body' => 'required|string',
-            'data' => 'required|array',
-        ]);
+        try {
+            $request->validate([
+                'device_token' => 'required|string|exists:users,device_token',
+                'title' => 'required|string',
+                'body' => 'required|string',
+                'data' => 'required|array',
+            ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'msg' => $e->errors()
             ], 422);
         }
 
-        $deviceToken = $request->device_token;
+        try {
+            $this->firebaseService->sendNotification(
+                $request->device_token,
+                $request->title,
+                $request->body,
+                $request->data
+            );
 
-        $this->firebaseService->sendNotification(
-            $deviceToken,
-            $request->title,
-            $request->body,
-            $request->data
-        );
+            return response()->json([
+                'msg' => 'Notification sent to user successfully.'
+            ], 200);
+        } catch (NotFound $e) {
+            // Handle invalid Firebase token
+            Log::warning("Invalid Firebase token: {$request->device_token}");
 
-        return response()->json([
-            'msg' => 'Notification sent to user successfully.'
-        ],200);
+            return response()->json([
+                'msg' => 'Failed to send notification. Invalid device token.'
+            ], 400);
+        } catch (\Exception $e) {
+            Log::error("Unexpected error: " . $e->getMessage());
+
+            return response()->json([
+                'msg' => 'Unexpected server error while sending notification.'
+            ], 500);
+        }
     }
 
     # Send a notification to all users.
@@ -65,33 +78,37 @@ class NotificationController extends Controller
             ], 422);
         }
 
-        $users = User::whereNotNull('device_token')->get();
-        $invalidTokens = [];
+        // Get distinct non-null device tokens
+        $deviceTokens = User::whereNotNull('device_token')
+            ->pluck('device_token')
+            ->unique()
+            ->values();
 
-        foreach ($users as $user) {
+        $invalidTokens = [];
+        $successCount = 0;
+
+        foreach ($deviceTokens as $token) {
             try {
                 $this->firebaseService->sendNotification(
-                    $user->device_token,
+                    $token,
                     $request->input('title'),
                     $request->input('body'),
                     $request->input('data', [])
                 );
+                $successCount++;
             } catch (NotFound $e) {
-                // Log invalid token and optionally remove it from DB
-                $invalidTokens[] = $user->device_token;
-
-                Log::warning("Invalid Firebase token for user ID {$user->id}: {$user->device_token}");
-
-                // Optional: Remove the invalid token from the DB
-                // $user->device_token = null;
-                // $user->save();
+                $invalidTokens[] = $token;
+                Log::warning("Invalid Firebase token: {$token}");
             } catch (\Exception $e) {
-                Log::error("Unexpected error sending notification to user ID {$user->id}: {$e->getMessage()}");
+                Log::error("Unexpected error sending notification to token {$token}: {$e->getMessage()}");
             }
         }
 
         return response()->json([
-            'msg' => 'Notification sent to all users successfully.'
+            'msg' => 'Notifications sent to all unique devices successfully.',
+            'notified_count' => $successCount,
+            'invalid_token_count' => count($invalidTokens),
+            'invalid_tokens' => $invalidTokens, // Optional, remove if too large
         ], 200);
     }
 

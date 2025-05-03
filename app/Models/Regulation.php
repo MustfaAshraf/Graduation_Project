@@ -14,7 +14,10 @@ class Regulation extends Model
         'lectures_tables', 
         'academic_guide', 
         'teams_guide', 
-        'postgraduate_guide', 
+        'postgraduate_guide',
+        'ai_regulation',
+        'cybersecurity_regulation',
+        'medical_regulation', 
         'role',
         'created_at',
         'updated_at'

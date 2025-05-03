@@ -165,6 +165,7 @@ class NotificationController extends Controller
             ], 401);
         }
 
+        $notification->is_read = true;
         $notification->read_at = now();
         $notification->save();
 

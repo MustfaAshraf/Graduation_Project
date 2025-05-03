@@ -125,7 +125,10 @@ class NotificationController extends Controller
         // Mark unread ones as read (after cloning to preserve original states)
         Notification::where('device_token', $user->device_token)
             ->where('is_read', false)
-            ->update(['is_read' => true]);
+            ->update([
+                'is_read' => true,
+                'read_at' => now()
+            ]);
 
         return response()->json([
             'msg' => 'User notifications retrieved successfully',

@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('body');
             $table->json('data')->nullable(); // Additional data for the notification
+            $table->boolean('is_read')->default(false); // Flag to check if the notification is read
             $table->timestamp('read_at')->nullable(); // Timestamp when the notification was read
             $table->timestamps();
         });

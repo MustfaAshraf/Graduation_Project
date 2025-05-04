@@ -21,7 +21,7 @@ use App\Http\Controllers\API\TimelineController;
 use App\Http\Controllers\API\CourseImagesController;
 use App\Http\Controllers\API\EnrollmentStatsController;
 use App\Http\Controllers\API\ComplaintController;
-
+use App\Http\Controllers\API\FacultyMembersController;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -112,5 +112,11 @@ Route::post('/reply-complaint', [ComplaintController::class, 'reply']);
 Route::post('/user-complaints', [ComplaintController::class, 'complaintsByUser']);
 Route::post('/complaint/update', [ComplaintController::class, 'update']);
 Route::post('/complaint/delete', [ComplaintController::class, 'delete']);
+
+# Faculty Members
+Route::get('/faculty-members', [FacultyMembersController::class, 'AllMembers']);
+Route::post('/faculty-members/add', [FacultyMembersController::class, 'store']);
+Route::post('/faculty-members/update', [FacultyMembersController::class, 'update']);
+Route::post('/faculty-members/delete', [FacultyMembersController::class, 'delete']);
 
 

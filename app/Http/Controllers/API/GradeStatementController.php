@@ -73,7 +73,7 @@ class GradeStatementController extends Controller
                     'updated_at' => $statement->updated_at
                 ];
             });
-            
+
             if ($gradeStatements->isEmpty()) {
                 return response()->json([
                     'msg' => 'No grade statement requests found',
@@ -91,4 +91,25 @@ class GradeStatementController extends Controller
             ], 422);
         }
     }
+    public function destroy(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|integer|exists:grade_statements,id',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => $e->errors()
+            ], 422);
+        }
+
+        $gradeStatement = GradeStatement::find($request->id);
+
+        $gradeStatement->delete();
+
+        return response()->json([
+            'msg' => 'Grade statement deleted successfully'
+        ], 200);
+    }
+
 }

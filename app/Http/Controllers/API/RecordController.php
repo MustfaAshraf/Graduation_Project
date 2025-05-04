@@ -38,9 +38,9 @@ class RecordController extends Controller
         $imgUrl = null;
 
         if ($request->hasFile('payment_receipt')) {
-            $img = $request->file('payment_receipt'); 
-            $imgName = rand() . time() . "." . $img->extension(); 
-            $destinationPath = public_path('receipts'); 
+            $img = $request->file('payment_receipt');
+            $imgName = rand() . time() . "." . $img->extension();
+            $destinationPath = public_path('receipts');
             $img->move($destinationPath, $imgName);
             $imgUrl = url('receipts/' . $imgName);
         }
@@ -105,4 +105,32 @@ class RecordController extends Controller
             ], 422);
         }
     }
+    public function destroy(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|integer|exists:records,id',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => $e->errors(),
+            ], 422);
+        }
+
+        $record = Record::find($request->id);
+
+        $receiptPath = public_path('receipts/' . $record->receipt);
+        if (file_exists($receiptPath)) {
+            unlink($receiptPath);
+        }
+
+        $record->delete();
+
+        return response()->json([
+            'msg' => 'Record deleted successfully'
+        ], 200);
+    }
+
+
+
 }

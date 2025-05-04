@@ -91,4 +91,25 @@ class PermitStatementController extends Controller
             ], 422);
         }
     }
+    public function destroy(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|integer|exists:permit_statements,id',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'msg' => $e->errors()
+            ], 422);
+        }
+
+        $permitStatement = PermitStatement::find($request->id);
+
+        $permitStatement->delete();
+
+        return response()->json([
+            'msg' => 'Permit statement deleted successfully'
+        ], 200);
+    }
+
 }

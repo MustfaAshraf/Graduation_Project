@@ -59,6 +59,7 @@ Route::post('/user-data', [GetProfile::class, 'getUserInfo']);
 # Record
 Route::post('/university-requests', [RecordController::class, 'store']);
 Route::get('/housing-requests', [RecordController::class, 'index']);
+Route::delete('/request-delete/{id}', [RecordController::class, 'destroy']);
 
 #CoursesImages
 Route::post('/images/add', [CourseImagesController::class, 'uploadImage']);
@@ -67,6 +68,7 @@ Route::get('/all-images', [CourseImagesController::class, 'getImages']);
 #Enrollments
 Route::post('/enroll', [EnrollmentController::class, 'store']);
 Route::get('/enrollments', [EnrollmentController::class, 'index']);
+Route::delete('/delete-enrollment/{id}', [EnrollmentController::class, 'destroy']);
 
 #User Requests
 Route::post('/requests', [UserRequestsController::class, 'fetchRequests']);
@@ -76,10 +78,14 @@ Route::post('/update-request', [UserRequestsController::class, 'updateRequestSta
 # Grade Request
 Route::post('/grade-Request', [GradeStatementController::class, 'getGradeStatement']);
 Route::get('/grade-statements', [GradeStatementController::class, 'index']);
+Route::delete('/delete-grade-statement/{id}', [GradeStatementController::class, 'destroy']);
+
 
 # permission Request
 Route::post('/permit-Request', [PermitStatementController::class, 'getPermitStatement']);
 Route::get('/permit-statements', [PermitStatementController::class, 'index']);
+Route::delete('/permit-statement/{id}', [PermitStatementController::class, 'destroy']);
+
 
 # Ranking
 Route::post('/ranking', [RankingController::class, 'Ranking']);
@@ -105,6 +111,7 @@ Route::get('/requests/weekly-status', [UserRequestsController::class, 'getWeekly
 #Enrollment Statistics
 Route::get('/enrollment-stats', [EnrollmentStatsController::class, 'getRequestsCount']);
 
+
 # Complaints
 Route::post('/write-complaint', [ComplaintController::class, 'store']);
 Route::get('/complaints', [ComplaintController::class, 'index']);
@@ -112,5 +119,7 @@ Route::post('/reply-complaint', [ComplaintController::class, 'reply']);
 Route::post('/user-complaints', [ComplaintController::class, 'complaintsByUser']);
 Route::post('/complaint/update', [ComplaintController::class, 'update']);
 Route::post('/complaint/delete', [ComplaintController::class, 'delete']);
+
+
 
 

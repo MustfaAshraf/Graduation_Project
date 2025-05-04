@@ -98,4 +98,25 @@ class EnrollmentController extends Controller
             ]
         ], 200);
     }
+
+    public function destroy($id)
+    {
+        $enrollment = Enrollment::find($id);
+
+        if (!$enrollment) {
+            return response()->json([
+                'msg' => 'Enrollment not found'
+            ], 404);
+        }
+
+        @unlink(public_path('enrollments/id_photo/' . $enrollment->id_photo_f));
+        @unlink(public_path('enrollments/id_photo/' . $enrollment->id_photo_b));
+        @unlink(public_path('enrollments/nomination_photo/' . $enrollment->nomination_card_photo));
+
+        $enrollment->delete();
+
+        return response()->json([
+            'msg' => 'Enrollment deleted successfully'
+        ], 200);
+    }
 }

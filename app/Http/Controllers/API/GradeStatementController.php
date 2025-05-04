@@ -73,7 +73,7 @@ class GradeStatementController extends Controller
                     'updated_at' => $statement->updated_at
                 ];
             });
-            
+
             if ($gradeStatements->isEmpty()) {
                 return response()->json([
                     'msg' => 'No grade statement requests found',
@@ -91,4 +91,21 @@ class GradeStatementController extends Controller
             ], 422);
         }
     }
+    public function destroy($id): JsonResponse
+    {
+        $gradeStatement = GradeStatement::find($id);
+
+        if (!$gradeStatement) {
+            return response()->json([
+                'msg' => 'Grade statement not found'
+            ], 404);
+        }
+
+        $gradeStatement->delete();
+
+        return response()->json([
+            'msg' => 'Grade statement deleted successfully'
+        ], 200);
+    }
+
 }

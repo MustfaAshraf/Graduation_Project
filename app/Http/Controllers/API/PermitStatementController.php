@@ -91,4 +91,21 @@ class PermitStatementController extends Controller
             ], 422);
         }
     }
+    public function destroy($id): JsonResponse
+    {
+        $permitStatement = PermitStatement::find($id);
+
+        if (!$permitStatement) {
+            return response()->json([
+                'msg' => 'Permit statement not found'
+            ], 404);
+        }
+
+        $permitStatement->delete();
+
+        return response()->json([
+            'msg' => 'Permit statement deleted successfully'
+        ], 200);
+    }
+
 }

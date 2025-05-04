@@ -91,15 +91,19 @@ class PermitStatementController extends Controller
             ], 422);
         }
     }
-    public function destroy($id): JsonResponse
+    public function destroy(Request $request)
     {
-        $permitStatement = PermitStatement::find($id);
-
-        if (!$permitStatement) {
+        try {
+            $request->validate([
+                'id' => 'required|integer|exists:permit_statements,id',
+            ]);
+        } catch (ValidationException $e) {
             return response()->json([
-                'msg' => 'Permit statement not found'
-            ], 404);
+                'msg' => $e->errors()
+            ], 422);
         }
+
+        $permitStatement = PermitStatement::find($request->id);
 
         $permitStatement->delete();
 

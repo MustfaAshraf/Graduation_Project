@@ -91,15 +91,19 @@ class GradeStatementController extends Controller
             ], 422);
         }
     }
-    public function destroy($id): JsonResponse
+    public function destroy(Request $request)
     {
-        $gradeStatement = GradeStatement::find($id);
-
-        if (!$gradeStatement) {
+        try {
+            $request->validate([
+                'id' => 'required|integer|exists:grade_statements,id',
+            ]);
+        } catch (ValidationException $e) {
             return response()->json([
-                'msg' => 'Grade statement not found'
-            ], 404);
+                'msg' => $e->errors()
+            ], 422);
         }
+
+        $gradeStatement = GradeStatement::find($request->id);
 
         $gradeStatement->delete();
 

@@ -59,7 +59,7 @@ Route::post('/user-data', [GetProfile::class, 'getUserInfo']);
 # Record
 Route::post('/university-requests', [RecordController::class, 'store']);
 Route::get('/housing-requests', [RecordController::class, 'index']);
-Route::delete('/request-delete/{id}', [RecordController::class, 'destroy']);
+Route::post('/requests/delete', [RecordController::class, 'destroy']);
 
 #CoursesImages
 Route::post('/images/add', [CourseImagesController::class, 'uploadImage']);
@@ -68,7 +68,7 @@ Route::get('/all-images', [CourseImagesController::class, 'getImages']);
 #Enrollments
 Route::post('/enroll', [EnrollmentController::class, 'store']);
 Route::get('/enrollments', [EnrollmentController::class, 'index']);
-Route::delete('/delete-enrollment/{id}', [EnrollmentController::class, 'destroy']);
+Route::post('/enrollments/delete', [EnrollmentController::class, 'destroy']);
 
 #User Requests
 Route::post('/requests', [UserRequestsController::class, 'fetchRequests']);
@@ -78,13 +78,13 @@ Route::post('/update-request', [UserRequestsController::class, 'updateRequestSta
 # Grade Request
 Route::post('/grade-Request', [GradeStatementController::class, 'getGradeStatement']);
 Route::get('/grade-statements', [GradeStatementController::class, 'index']);
-Route::delete('/delete-grade-statement/{id}', [GradeStatementController::class, 'destroy']);
+Route::post('/grade-statements/delete', [GradeStatementController::class, 'destroy']);
 
 
 # permission Request
 Route::post('/permit-Request', [PermitStatementController::class, 'getPermitStatement']);
 Route::get('/permit-statements', [PermitStatementController::class, 'index']);
-Route::delete('/permit-statement/{id}', [PermitStatementController::class, 'destroy']);
+Route::post('/permit-statements/delete', [PermitStatementController::class, 'destroy']);
 
 
 # Ranking

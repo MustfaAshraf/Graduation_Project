@@ -99,15 +99,19 @@ class EnrollmentController extends Controller
         ], 200);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $enrollment = Enrollment::find($id);
-
-        if (!$enrollment) {
+        try {
+            $request->validate([
+                'id' => 'required|integer|exists:enrollments,id',
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
-                'msg' => 'Enrollment not found'
-            ], 404);
+                'msg' => $e->getMessage()
+            ], 422);
         }
+
+        $enrollment = Enrollment::find($request->id);
 
         @unlink(public_path('enrollments/id_photo/' . $enrollment->id_photo_f));
         @unlink(public_path('enrollments/id_photo/' . $enrollment->id_photo_b));

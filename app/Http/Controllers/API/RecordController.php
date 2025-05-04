@@ -105,17 +105,20 @@ class RecordController extends Controller
             ], 422);
         }
     }
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $record = Record::find($id);
-
-        if (!$record) {
+        try {
+            $request->validate([
+                'id' => 'required|integer|exists:records,id',
+            ]);
+        } catch (ValidationException $e) {
             return response()->json([
-                'msg' => 'Record not found'
-            ], 404);
+                'msg' => $e->errors(),
+            ], 422);
         }
 
-        // حذف الصورة من مجلد السيرفر (اختياري)
+        $record = Record::find($request->id);
+
         $receiptPath = public_path('receipts/' . $record->receipt);
         if (file_exists($receiptPath)) {
             unlink($receiptPath);

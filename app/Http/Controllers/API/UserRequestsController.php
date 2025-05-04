@@ -9,10 +9,19 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Services\FirebaseNotificationService;
+use Illuminate\Support\Facades\Log;
 use PHPUnit\Framework\Constraint\IsEmpty;
 
 class UserRequestsController extends Controller
 {
+    protected $firebaseService;
+
+    public function __construct(FirebaseNotificationService $firebaseService)
+    {
+        $this->firebaseService = $firebaseService;
+    }
+    
     public function fetchRequests(Request $request)
     {
         $token = $request->header('Authorization');
@@ -66,11 +75,11 @@ class UserRequestsController extends Controller
 
     public function updateRequestStatus(Request $request)
     {
-        try{
-        $request->validate([
-            'request_id' => 'required|exists:requests,id',
-            'status' => 'required|string|in:Pending,Approved,Rejected',
-        ]);
+        try {
+            $request->validate([
+                'request_id' => 'required|exists:requests,id',
+                'status' => 'required|string|in:Pending,Approved,Rejected',
+            ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'msg' => $e->errors(),
@@ -87,15 +96,16 @@ class UserRequestsController extends Controller
             ], 200);
         }
 
-        if($request->status == 'Approved'){
-           $message_en = 'Your request has been approved';
-           $message_ar = 'طلبك تم الموافقة عليه';
-        }else if($request->status == 'Rejected'){
+        // Prepare messages
+        if ($request->status == 'Approved') {
+            $message_en = 'Your request has been approved';
+            $message_ar = 'طلبك تم الموافقة عليه';
+        } elseif ($request->status == 'Rejected') {
             $message_en = 'Your request has been rejected';
             $message_ar = 'طلبك تم رفضه';
         }
 
-        // Update the request status and message
+        // Update the request
         DB::table('requests')
             ->where('id', $request->request_id)
             ->update([
@@ -105,7 +115,22 @@ class UserRequestsController extends Controller
                 'completed_at' => now()
             ]);
 
-        // Return a success response
+        // Fetch the user who submitted the request
+        $user = User::find($requestRecord->user_id); // assuming 'user_id' is in requests table
+
+        if ($user && $user->device_token) {
+            try {
+                $this->firebaseService->sendNotification(
+                    $user->device_token,
+                    'Request Update',
+                    $message_en, // or use localized text here
+                    ['request_id' => $request->request_id, 'status' => $request->status]
+                );
+            } catch (\Exception $e) {
+                Log::error("Notification failed for user ID {$user->id}: " . $e->getMessage());
+            }
+        }
+
         return response()->json([
             'msg' => 'Request is completed successfully',
             'data' => [
@@ -119,41 +144,42 @@ class UserRequestsController extends Controller
             ]
         ], 200);
     }
+
     public function getWeeklyRequestsStatus()
-{
-    // Fetch request statistics grouped by the day of the week
-    $weeklyStatus = DB::table('requests')
-        ->select(
-            DB::raw('DAYNAME(created_at) as day_name'),
-            DB::raw('SUM(CASE WHEN status = "Approved" THEN 1 ELSE 0 END) as approved_count'),
-            DB::raw('SUM(CASE WHEN status = "Pending" THEN 1 ELSE 0 END) as pending_count'),
-            DB::raw('COUNT(*) as total_requests')
-        )
-        ->groupBy(DB::raw('DAYNAME(created_at)'))
-        ->get()
-        ->keyBy('day_name');
+    {
+        // Fetch request statistics grouped by the day of the week
+        $weeklyStatus = DB::table('requests')
+            ->select(
+                DB::raw('DAYNAME(created_at) as day_name'),
+                DB::raw('SUM(CASE WHEN status = "Approved" THEN 1 ELSE 0 END) as approved_count'),
+                DB::raw('SUM(CASE WHEN status = "Pending" THEN 1 ELSE 0 END) as pending_count'),
+                DB::raw('COUNT(*) as total_requests')
+            )
+            ->groupBy(DB::raw('DAYNAME(created_at)'))
+            ->get()
+            ->keyBy('day_name');
 
-    // Define the order of days in the week
-    $daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        // Define the order of days in the week
+        $daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-    $result = [];
+        $result = [];
 
-    // Ensure all days are included, even if there are no requests for that day
-    foreach ($daysOfWeek as $day) {
-        $result[] = [
-            'day_name' => $day,
-            'approved_count' => $weeklyStatus[$day]->approved_count ?? 0,
-            'pending_count' => $weeklyStatus[$day]->pending_count ?? 0,
-            'total_requests' => $weeklyStatus[$day]->total_requests ?? 0,
-        ];
+        // Ensure all days are included, even if there are no requests for that day
+        foreach ($daysOfWeek as $day) {
+            $result[] = [
+                'day_name' => $day,
+                'approved_count' => $weeklyStatus[$day]->approved_count ?? 0,
+                'pending_count' => $weeklyStatus[$day]->pending_count ?? 0,
+                'total_requests' => $weeklyStatus[$day]->total_requests ?? 0,
+            ];
+        }
+
+        // Return the formatted response
+        return response()->json([
+            'msg' => 'Weekly Requests Statistics',
+            'data' => $result
+        ], 200);
     }
-
-    // Return the formatted response
-    return response()->json([
-        'msg' => 'Weekly Requests Statistics',
-        'data' => $result
-    ], 200);
-}
 
     public function fetchAllRequests()
     {

@@ -6,10 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Complaint;
 use App\Models\User;
+use App\Services\FirebaseNotificationService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class ComplaintController extends Controller
 {
+    protected $firebaseService;
+
+    public function __construct(FirebaseNotificationService $firebaseService)
+    {
+        $this->firebaseService = $firebaseService;
+    }
+    
     public function store(Request $request)
     {
         $token = str_replace('Bearer ', '', $request->header('Authorization'));
@@ -58,33 +67,53 @@ class ComplaintController extends Controller
 
     public function reply(Request $request)
     {
-        // Validate the response input
+        // Validate the input
         $request->validate([
             'id' => 'required|numeric',
             'response' => 'required|string',
         ]);
 
-        // Find the complaint by ID
+        // Find the complaint
         $complaint = Complaint::find($request->id);
 
         if (!$complaint) {
             return response()->json([
                 'msg' => 'Complaint not found',
                 'data' => [],
-                ], 200);
+            ], 200);
         }
 
-        // Update complaint with admin response and change status
+        // Update the complaint
         $complaint->response = $request->response;
         $complaint->status = 'approved';
         $complaint->response_time = now();
         $complaint->save();
 
+        // Send notification to the user
+        $user = User::find($complaint->user_id); // assuming user_id exists
+
+        if ($user && $user->device_token) {
+            try {
+                $this->firebaseService->sendNotification(
+                    $user->device_token,
+                    'Complaint Replied',
+                    $request->response,
+                    [
+                        'complaint_id' => $complaint->id,
+                        'status' => 'approved'
+                    ]
+                );
+            } catch (\Exception $e) {
+                Log::error("Notification failed for user ID {$user->id}: " . $e->getMessage());
+            }
+        }
+
         return response()->json([
             'msg' => 'Complaint has been responded to and status updated',
             'data' => $complaint
-        ],200);
+        ], 200);
     }
+
     public function complaintsByUser(Request $request)
     {
         $token = str_replace('Bearer ', '', $request->header('Authorization'));

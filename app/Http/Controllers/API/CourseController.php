@@ -6,12 +6,21 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CourseResource;
 use App\Models\course;
 use App\Models\User;
+use App\Services\FirebaseNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class CourseController extends Controller
 {
+    protected $firebaseService;
+
+    public function __construct(FirebaseNotificationService $firebaseService)
+    {
+        $this->firebaseService = $firebaseService;
+    }
+
     public function show()
     {
         $courses = course::all();
@@ -192,6 +201,26 @@ class CourseController extends Controller
             'image' => $imgName,
             'price' => $validatedData['price'],
         ]);
+
+        // 🔔 Send notification to all users
+        $users = User::whereNotNull('device_token')->pluck('device_token')->unique();
+
+        foreach ($users as $deviceToken) {
+            try {
+                $this->firebaseService->sendNotification(
+                    $deviceToken,
+                    'New Course Available!',
+                    'Check out our new course: ' . $course->title_en,
+                    [
+                        'course_id' => $course->id,
+                        'title' => $course->title_en,
+                        'price' => $course->price
+                    ]
+                );
+            } catch (\Throwable $e) {
+                Log::warning("Failed to send course notification to token: $deviceToken | Error: " . $e->getMessage());
+            }
+        }
 
         return response()->json([
             'msg' => 'Course added successfully',

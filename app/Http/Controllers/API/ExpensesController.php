@@ -67,8 +67,9 @@ class ExpensesController extends Controller
 
         if (!$expenses) {
             return response()->json([
-                'msg' => 'No expenses found for this user'
-            ], 404);
+                'msg' => 'No expenses found for this user',
+                'data' => []
+            ], 200);
         }
 
         return response()->json([
@@ -82,8 +83,9 @@ class ExpensesController extends Controller
 
         if ($expenses->isEmpty()) {
             return response()->json([
-                'msg' => 'No expenses found in the system'
-            ], 451);
+                'msg' => 'No expenses found in the system',
+                'data' => []
+            ], 200);
         }
 
         return response()->json([

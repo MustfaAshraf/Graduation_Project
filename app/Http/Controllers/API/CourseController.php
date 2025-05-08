@@ -105,7 +105,9 @@ class CourseController extends Controller
         $course->save();
 
         return response()->json([
-            'msg' => 'Rating added successfully'
+            'msg' => 'Rating added successfully',
+            'average_rating' => $course->ratings_count > 0 ? round($course->ratings_sum / $course->ratings_count, 2) : 0,
+            'ratings_count' => $course->ratings_count,
         ], 200);
     }
 

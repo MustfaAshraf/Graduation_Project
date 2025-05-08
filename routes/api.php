@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\EnrollmentController;
+use App\Http\Controllers\API\ExpensesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\RegisterController;
@@ -125,6 +126,11 @@ Route::get('/faculty-members', [FacultyMembersController::class, 'AllMembers']);
 Route::post('/faculty-members/add', [FacultyMembersController::class, 'store']);
 Route::post('/faculty-members/update', [FacultyMembersController::class, 'update']);
 Route::post('/faculty-members/delete', [FacultyMembersController::class, 'delete']);
+
+# Expenses
+Route::post('/expenses/add', [ExpensesController::class, 'Upload']);
+Route::post('/user/expenses', [ExpensesController::class, 'getUserExpenses']);
+Route::get('/all-expenses', [ExpensesController::class, 'getAllExpenses']);
 
 
 

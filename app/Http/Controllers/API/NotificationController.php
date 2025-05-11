@@ -193,5 +193,39 @@ class NotificationController extends Controller
         return response()->json(['message' => 'All notifications marked as read.']);
     }
 
+    public function deleteAllNotifications(Request $request)
+    {
+        $token = str_replace('Bearer ', '', $request->header('Authorization'));
+        $user = User::where('token', $token)->first();
+
+        if (!$user) {
+            return response()->json([
+                'msg' => 'Invalid token, User not found'
+            ], 401);
+        }
+
+        Notification::where('device_token', $user->device_token)->delete();
+
+        return response()->json([
+            'msg' => 'All notifications deleted successfully'
+        ], 200);
+    }
+    public function deleteNotification(Request $request)
+    {
+        $notification = Notification::find($request->id);
+
+        if (!$notification) {
+            return response()->json([
+                'msg' => 'Notification not found'
+            ], 401);
+        }
+
+        $notification->delete();
+
+        return response()->json([
+            'msg' => 'Notification deleted successfully'
+        ], 200);
+    }
+
 
 }

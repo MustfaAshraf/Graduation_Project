@@ -105,6 +105,8 @@ Route::post('/notifications/send-to-all', [NotificationController::class, 'sendT
 Route::post('/notifications', [NotificationController::class, 'getUserNotifications']);
 Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
 Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+Route::post('/notifications/delete-all', [NotificationController::class, 'deleteAllNotifications']);
+Route::post('/notifications/delete', [NotificationController::class, 'deleteNotification']);
 
 # get requests
 Route::get('/requests/weekly-status', [UserRequestsController::class, 'getWeeklyRequestsStatus']);

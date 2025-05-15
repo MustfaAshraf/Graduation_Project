@@ -53,6 +53,7 @@ class ExpensesController extends Controller
             
             $expense = Expense::firstOrCreate(['user_id' => $user->id]);
             $expense->{$columnMap[$request->term]} = $imgName;
+            $expense->save();
         } else {
             return response()->json([
                 'msg' => 'No image found in the request, Please upload your receipt',

@@ -24,7 +24,7 @@ class ExpensesController extends Controller
 
         try{
         $request->validate([
-            'term' => 'required|string|in:first_term,second_term,third_term,fourth_term,fifth_term,sixth_term,seventh_term,eighth_term',
+            'term' => 'required|in:1,2,3,4,5,6,7,8',
             'receipt' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
         } catch (ValidationException $e) {
@@ -32,6 +32,17 @@ class ExpensesController extends Controller
                 'msg' => $e->errors(), // Validation errors
             ], 422);
         }
+
+        $columnMap = [
+                '1' => 'first_term',
+                '2' => 'second_term',
+                '3' => 'third_term',
+                '4' => 'fourth_term',
+                '5' => 'fifth_term',
+                '6' => 'sixth_term',
+                '7' => 'seventh_term',
+                '8' => 'eighth_term',
+            ];
 
         if ($request->hasFile('receipt')) {
             $img = $request->file('receipt'); 
@@ -41,7 +52,7 @@ class ExpensesController extends Controller
             $imgUrl = url('Expenses/' . $imgName);
             
             $expense = Expense::firstOrCreate(['user_id' => $user->id]);
-            $expense->{$request->term} = $imgName;
+            $expense->{$columnMap[$request->term]} = $imgName;
         } else {
             return response()->json([
                 'msg' => 'No image found in the request, Please upload your receipt',

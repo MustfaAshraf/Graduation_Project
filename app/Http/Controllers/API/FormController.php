@@ -198,17 +198,18 @@ class FormController extends Controller
                 . escapeshellarg($request->notes ?? ''));
 
             // ⏯ Execute script
-            exec($command, $output, $resultCode);
+            exec($command . ' 2>&1', $output, $resultCode);
 
             if ($resultCode !== 0) {
                 return response()->json([
-                    'msg' => 'Failed to process and print the form.'
+                    'msg' => 'Failed to process and print the form.',
+                    'debug' => $output
                 ], 412);
             }
 
             return response()->json([
                 'msg' => 'Form filled and sent to printer successfully.',
-                'filled_form' => url('storage/filled_forms/' . $output[0]) // Assuming the script returns the filename
+                'filled_form' => asset('storage/app/public/filled_forms/' . $output[0]) // Assuming the script returns the filename
         ], 200);
         }
 

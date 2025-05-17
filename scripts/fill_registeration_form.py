@@ -44,17 +44,20 @@ page = reader.pages[0]
 page.merge_page(overlay.pages[0])
 writer.add_page(page)
 
-output_path = "/home/site/wwwroot/storage/app/filled_forms/filled_registration_form.pdf"
+output_path = "/home/site/wwwroot/storage/app/public/filled_forms/filled_registration_form.pdf"
 with open(output_path, "wb") as f:
     writer.write(f)
 
+print("filled_registeration_form.pdf")
+
 # Send to printer
-printer_name = win32print.GetDefaultPrinter()
-win32api.ShellExecute(
-    0,
-    "print",
-    output_path,
-    f'/d:"{printer_name}"',
-    ".",
-    0
-)
+#printer_name = win32print.GetDefaultPrinter()
+#win32api.ShellExecute(
+#    0,
+#    "print",
+#    output_path,
+#    f'/d:"{printer_name}"',
+#    ".",
+#    0
+#)
+

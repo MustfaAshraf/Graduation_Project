@@ -187,8 +187,10 @@ class FormController extends Controller
             ], 451);
             }
 
+            $scriptPath = base_path('scripts/fill_registration_form.py');
+
             // 🧠 Prepare command data for the script
-            $command = escapeshellcmd("python3 scripts/fill_registration_form.py "
+            $command = escapeshellcmd("python3 $scriptPath "
                 . escapeshellarg($formPath) . " "
                 . escapeshellarg($request->student_name) . " "
                 . escapeshellarg($request->academic_year) . " "

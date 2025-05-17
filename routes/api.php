@@ -139,7 +139,7 @@ Route::get('/all-expenses', [ExpensesController::class, 'getAllExpenses']);
 Route::post('/upload-form', [FormController::class, 'uploadForm']);
 Route::post('/get-form', [FormController::class, 'getForm']);
 Route::post('/delete-form', [FormController::class, 'deleteForm']);
-Route::get('/all-forms', [FormController::class, 'getAllForm']);
+Route::get('/all-forms', [FormController::class, 'getAllForms']);
 Route::post('/form/print', [FormController::class, 'fillAndPrintForm']);
 
 

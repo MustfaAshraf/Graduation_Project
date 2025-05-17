@@ -23,6 +23,7 @@ use App\Http\Controllers\API\CourseImagesController;
 use App\Http\Controllers\API\EnrollmentStatsController;
 use App\Http\Controllers\API\ComplaintController;
 use App\Http\Controllers\API\FacultyMembersController;
+use App\Http\Controllers\API\FormController;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -133,6 +134,13 @@ Route::post('/faculty-members/delete', [FacultyMembersController::class, 'delete
 Route::post('/expenses/add', [ExpensesController::class, 'Upload']);
 Route::post('/user/expenses', [ExpensesController::class, 'getUserExpenses']);
 Route::get('/all-expenses', [ExpensesController::class, 'getAllExpenses']);
+
+# Forms
+Route::post('/upload-form', [FormController::class, 'uploadForm']);
+Route::post('/get-form', [FormController::class, 'getForm']);
+Route::post('/delete-form', [FormController::class, 'deleteForm']);
+Route::post('/all-forms', [FormController::class, 'getAllForm']);
+Route::post('/form/print', [FormController::class, 'fillAndPrintForm']);
 
 
 

@@ -40,7 +40,7 @@ Route::post('/reset-password', [LoginController::class, 'resetPassword']);
 
 # Users Data
 Route::post('/data', [UserController::class, 'storeUserData']);
-Route::post('/all-users', [UserController::class, 'getAllUsers']);
+Route::get('/all-users', [UserController::class, 'getAllUsers']);
 Route::post('/users/add', [UserController::class, 'addUser']);
 Route::post('/users/update', [UserController::class, 'updateUser']);
 Route::post('/users/delete', [UserController::class, 'deleteUser']);

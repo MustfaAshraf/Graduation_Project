@@ -134,6 +134,7 @@ Route::post('/faculty-members/delete', [FacultyMembersController::class, 'delete
 Route::post('/expenses/add', [ExpensesController::class, 'Upload']);
 Route::post('/user/expenses', [ExpensesController::class, 'getUserExpenses']);
 Route::get('/all-expenses', [ExpensesController::class, 'getAllExpenses']);
+Route::post('/delete-expenses', [ExpensesController::class, 'deleteAllExpenses']);
 
 # Forms
 Route::post('/upload-form', [FormController::class, 'uploadForm']);

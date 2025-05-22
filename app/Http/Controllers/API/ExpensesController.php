@@ -105,4 +105,22 @@ class ExpensesController extends Controller
             'data' => ExpensesResource::collection($expenses)
         ], 200);
     }
+    public function deleteAllExpenses(){
+        $expenses = Expense::all();
+
+        if ($expenses->isEmpty()) {
+            return response()->json([
+                'msg' => 'No expenses found in the system',
+                'data' => []
+            ], 200);
+        }
+
+        foreach ($expenses as $expense) {
+            $expense->delete();
+        }
+
+        return response()->json([
+            'msg' => 'All expenses deleted successfully',
+        ], 200);
+    }
 }

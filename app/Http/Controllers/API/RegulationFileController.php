@@ -3,12 +3,23 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Regulation;
+use App\Models\User;
+use App\Services\FirebaseNotificationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class RegulationFileController extends Controller
 {
+    protected $firebaseService;
+
+    public function __construct(FirebaseNotificationService $firebaseService)
+    {
+        $this->firebaseService = $firebaseService;
+    }
+
     public function UploadFile(Request $request) {
         try {
             $request->validate([
@@ -47,7 +58,39 @@ class RegulationFileController extends Controller
             ]);
     
             $fileUrl = url('Files/' . $fileName);
-    
+            
+            // 🟢 Notification content
+            $title = 'تم تحديث لائحة';
+            $title_en = 'A regulation file has been updated';
+            $body = 'يرجي مراجعة اللوائح المحدثة';
+            $body_en = 'Please check the updated regulations';
+
+            // 🔔 Send notification to all users
+            $deviceTokens = User::whereNotNull('device_token')->pluck('device_token')->unique();
+
+            foreach ($deviceTokens as $token) {
+                try {
+                    $this->firebaseService->sendNotification(
+                        $token,
+                        $title,
+                        $body,
+                        [
+                            'file_url' => $fileUrl
+                            ]
+                    );
+
+                    // Update notification with English & type info
+                    Notification::where('device_token', $token)->latest()->first()?->update([
+                        'title_en' => $title_en,
+                        'body_en' => $body_en,
+                        'type' => '3'
+                    ]);
+
+                } catch (\Throwable $e) {
+                    Log::warning("Failed to send regulation notification to token: $token | Error: " . $e->getMessage());
+                }
+            }
+
             return response()->json([
                 'msg' => 'File Uploaded successfully',
                 'file' => $fileUrl,

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RequestsResource;
+use App\Models\Notification;
 use App\Models\Request as ModelsRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -118,14 +119,36 @@ class UserRequestsController extends Controller
         // Fetch the user who submitted the request
         $user = User::find($requestRecord->user_id); // assuming 'user_id' is in requests table
 
+        $title = "تحديث بشأن طلبك";
+        $title_en = "Update on your request";
+        
+        if ($request->status == 'Approved') {
+            $body = "طلبك تمت الموافقة عليه";
+            $body_en = "Your request has been approved";
+        } elseif ($request->status == 'Rejected') {
+            $body = "طلبك تم رفضه";
+            $body_en = "Your request has been rejected";
+        }
+        
         if ($user && $user->device_token) {
             try {
                 $this->firebaseService->sendNotification(
                     $user->device_token,
-                    'Request Update',
-                    $message_en, // or use localized text here
-                    ['request_id' => $request->request_id, 'status' => $request->status]
+                    $title,
+                    $body, // or use localized text here
+                    [
+                         'request_id' => $request->request_id,
+                         'status' => $request->status
+                         ]
                 );
+
+                Notification::where('device_token', $user->deviceToken)
+                ->latest()
+                ->first()?->update([
+                    'title_en' => $title_en,
+                    'body_en' => $body_en,
+                    'type' => '1',
+                ]);
             } catch (\Exception $e) {
                 Log::error("Notification failed for user ID {$user->id}: " . $e->getMessage());
             }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CourseResource;
 use App\Models\course;
+use App\Models\Notification;
 use App\Models\User;
 use App\Services\FirebaseNotificationService;
 use Illuminate\Http\Request;
@@ -206,19 +207,31 @@ class CourseController extends Controller
 
         // 🔔 Send notification to all users
         $users = User::whereNotNull('device_token')->pluck('device_token')->unique();
+        $title = "تم إضافة دورة جديدة!";
+        $title_en = "New Course Available!";
+        $body = "تفقدها الآن وتعرف علي التفاصيل!";
+        $body_en = "Check it out now and learn more about it!";
 
         foreach ($users as $deviceToken) {
             try {
                 $this->firebaseService->sendNotification(
                     $deviceToken,
-                    'New Course Available!',
-                    'Check out our new course: ' . $course->title_en,
+                    $title,
+                    $body,
                     [
                         'course_id' => $course->id,
                         'title' => $course->title_en,
                         'price' => $course->price
                     ]
                 );
+
+                Notification::where('device_token', $deviceToken)
+                ->latest()
+                ->first()?->update([
+                    'title_en' => $title_en,
+                    'body_en' => $body_en,
+                    'type' => '2',
+                ]);
             } catch (\Throwable $e) {
                 Log::warning("Failed to send course notification to token: $deviceToken | Error: " . $e->getMessage());
             }

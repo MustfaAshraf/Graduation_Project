@@ -142,7 +142,7 @@ class UserRequestsController extends Controller
                          ]
                 );
 
-                Notification::where('device_token', $user->deviceToken)
+                Notification::where('device_token', $user->device_token)
                 ->latest()
                 ->first()?->update([
                     'title_en' => $title_en,

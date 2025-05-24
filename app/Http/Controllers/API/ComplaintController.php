@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Complaint;
+use App\Models\Notification;
 use App\Models\User;
 use App\Services\FirebaseNotificationService;
 use Illuminate\Support\Facades\Log;
@@ -92,17 +93,28 @@ class ComplaintController extends Controller
         // Send notification to the user
         $user = User::find($complaint->user_id); // assuming user_id exists
 
+        $title = "تم الرد علي الشكوي";
+        $title_en = "Complaint Replied";
+        $body = "يُرجى مراجعة الرد لمعرفة المزيد من التفاصيل";
+        $body_en = "Please check the response for more details.";
+
         if ($user && $user->device_token) {
             try {
                 $this->firebaseService->sendNotification(
                     $user->device_token,
-                    'Complaint Replied',
-                    $request->response,
+                    $title,
+                    $body,
                     [
                         'complaint_id' => $complaint->id,
                         'status' => 'approved'
                     ]
                 );
+
+            Notification::where('device_token', $user->device_token)->latest()->first()?->update([
+                        'title_en' => $title_en,
+                        'body_en' => $body_en,
+                        'type' => '4'
+                    ]);
             } catch (\Exception $e) {
                 Log::error("Notification failed for user ID {$user->id}: " . $e->getMessage());
             }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('body');
             $table->text('body_en')->nullable(); // English body for the notification
             $table->json('data')->nullable(); // Additional data for the notification
-            $table->enum('type', ['1', '2', '3']); // Type of notification
+            $table->enum('type', ['1', '2', '3', '4']); // Type of notification
             $table->boolean('is_read')->default(false); // Flag to check if the notification is read
             $table->timestamp('read_at')->nullable(); // Timestamp when the notification was read
             $table->timestamps();

@@ -95,6 +95,7 @@ Route::post('/ranking', [RankingController::class, 'Ranking']);
 # Regulations
 Route::post('/upload-file', [RegulationFileController::class, 'UploadFile']);
 Route::post('/latest-file', [RegulationFileController::class, 'getLatestFile']);
+Route::get('/regulations', [RegulationFileController::class, 'getAllFiles']);
 
 # Timeline
 Route::post('/create-or-update-timeline', [TimelineController::class, 'CreateOrUpdateTimeline']);

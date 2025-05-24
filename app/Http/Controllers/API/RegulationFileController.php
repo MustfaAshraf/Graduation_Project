@@ -139,5 +139,34 @@ class RegulationFileController extends Controller
             'uploaded_at' => $latestFile->created_at,
         ], 200);
     }
+    public function getAllFiles(){
+        $files = Regulation::all();
+
+        if ($files->isEmpty()) {
+            return response()->json([
+                'msg' => 'No files found',
+                'data' => []
+            ], 200);
+        }
+
+        $fileUrls = $files->map(function ($file) {
+            return [
+                'role' => $file->role,
+                'regulation' => $file->regulation ? url('Files/' . $file->regulation) : null,
+                'lectures_tables' => $file->lectures_tables ? url('Files/' . $file->lectures_tables) : null,
+                'academic_guide' => $file->academic_guide ? url('Files/' . $file->academic_guide) : null,
+                'teams_guide' => $file->teams_guide ? url('Files/' . $file->teams_guide) : null,
+                'postgraduate_guide' => $file->postgraduate_guide ? url('Files/' . $file->postgraduate_guide) : null,
+                'ai_regulation' => $file->ai_regulation ? url('Files/' . $file->ai_regulation) : null,
+                'cybersecurity_regulation' => $file->cybersecurity_regulation ? url('Files/' . $file->cybersecurity_regulation) : null,
+                'medical_regulation' => $file->medical_regulation ? url('Files/' . $file->medical_regulation) : null,
+            ];
+        });
+
+        return response()->json([
+            'msg' => 'All files retrieved successfully',
+            'data' => $fileUrls
+        ], 200);
+    }
 
 }

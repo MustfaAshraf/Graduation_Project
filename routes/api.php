@@ -24,6 +24,7 @@ use App\Http\Controllers\API\EnrollmentStatsController;
 use App\Http\Controllers\API\ComplaintController;
 use App\Http\Controllers\API\FacultyMembersController;
 use App\Http\Controllers\API\FormController;
+use App\Http\Controllers\API\StatsController;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -115,6 +116,7 @@ Route::get('/requests/weekly-status', [UserRequestsController::class, 'getWeekly
 
 #Enrollment Statistics
 Route::get('/enrollment-stats', [EnrollmentStatsController::class, 'getRequestsCount']);
+Route::get('/counts', [StatsController::class, 'getCounts']);
 
 
 # Complaints

@@ -10,7 +10,6 @@ use App\Http\Controllers\API\LogoutController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\CourseController;
 use App\Http\Controllers\API\GetProfile;
-
 use App\Http\Controllers\Api\RecordController;
 use App\Http\Controllers\API\UserRequestsController;
 use App\Http\Controllers\API\GradeStatementController;
@@ -26,9 +25,6 @@ use App\Http\Controllers\API\FacultyMembersController;
 use App\Http\Controllers\API\FormController;
 use App\Http\Controllers\API\StatsController;
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 # Register & Verify Account
 Route::post('/register', [RegisterController::class, 'register']);
@@ -39,113 +35,113 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/forgot-password', [LoginController::class, 'sendResetLink']);
 Route::post('/reset-password', [LoginController::class, 'resetPassword']);
 
-# Users Data
-Route::post('/data', [UserController::class, 'storeUserData']);
-Route::get('/all-users', [UserController::class, 'getAllUsers']);
-Route::post('/users/add', [UserController::class, 'addUser']);
-Route::post('/users/update', [UserController::class, 'updateUser']);
-Route::post('/users/delete', [UserController::class, 'deleteUser']);
 
-# Logout
-Route::post('/logout', [LogoutController::class, 'logout']);
+Route::middleware('auth:api')->group(function () {
 
-# Courses
-Route::get('/all-courses', [CourseController::class, 'show']);
-Route::post('/rating', [CourseController::class, 'addRating']);
-Route::post('/course/add', [CourseController::class, 'addCourse']);
-Route::post('/course', [CourseController::class, 'showCourse']);
-Route::post('/update-course', [CourseController::class, 'updateCourse']);
-Route::post('/delete-course', [CourseController::class, 'deleteCourse']);
+    # Authenticated user
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 
-Route::post('/user-data', [GetProfile::class, 'getUserInfo']);
+    # Logout
+    Route::post('/logout', [LogoutController::class, 'logout']);
 
-# Record
-Route::post('/university-requests', [RecordController::class, 'store']);
-Route::get('/housing-requests', [RecordController::class, 'index']);
-Route::post('/requests/delete', [RecordController::class, 'destroy']);
+    # Users
+    Route::post('/data', [UserController::class, 'storeUserData']);
+    Route::get('/all-users', [UserController::class, 'getAllUsers']);
+    Route::post('/users/add', [UserController::class, 'addUser']);
+    Route::post('/users/update', [UserController::class, 'updateUser']);
+    Route::post('/users/delete', [UserController::class, 'deleteUser']);
+    Route::post('/user-data', [GetProfile::class, 'getUserInfo']);
 
-#CoursesImages
-Route::post('/images/add', [CourseImagesController::class, 'uploadImage']);
-Route::get('/all-images', [CourseImagesController::class, 'getImages']);
+    # Courses
+    Route::get('/all-courses', [CourseController::class, 'show']);
+    Route::post('/rating', [CourseController::class, 'addRating']);
+    Route::post('/course/add', [CourseController::class, 'addCourse']);
+    Route::post('/course', [CourseController::class, 'showCourse']);
+    Route::post('/update-course', [CourseController::class, 'updateCourse']);
+    Route::post('/delete-course', [CourseController::class, 'deleteCourse']);
 
-#Enrollments
-Route::post('/enroll', [EnrollmentController::class, 'store']);
-Route::get('/enrollments', [EnrollmentController::class, 'index']);
-Route::post('/enrollments/delete', [EnrollmentController::class, 'destroy']);
+    # Course Images
+    Route::post('/images/add', [CourseImagesController::class, 'uploadImage']);
+    Route::get('/all-images', [CourseImagesController::class, 'getImages']);
 
-#User Requests
-Route::post('/requests', [UserRequestsController::class, 'fetchRequests']);
-Route::post('/all-requests', [UserRequestsController::class, 'fetchAllRequests']);
-Route::post('/update-request', [UserRequestsController::class, 'updateRequestStatus']);
+    # Records (University & Housing Requests)
+    Route::post('/university-requests', [RecordController::class, 'store']);
+    Route::get('/housing-requests', [RecordController::class, 'index']);
+    Route::post('/requests/delete', [RecordController::class, 'destroy']);
 
-# Grade Request
-Route::post('/grade-Request', [GradeStatementController::class, 'getGradeStatement']);
-Route::get('/grade-statements', [GradeStatementController::class, 'index']);
-Route::post('/grade-statements/delete', [GradeStatementController::class, 'destroy']);
+    # Enrollments
+    Route::post('/enroll', [EnrollmentController::class, 'store']);
+    Route::get('/enrollments', [EnrollmentController::class, 'index']);
+    Route::post('/enrollments/delete', [EnrollmentController::class, 'destroy']);
 
+    # User Requests
+    Route::post('/requests', [UserRequestsController::class, 'fetchRequests']);
+    Route::post('/all-requests', [UserRequestsController::class, 'fetchAllRequests']);
+    Route::post('/update-request', [UserRequestsController::class, 'updateRequestStatus']);
+    Route::get('/requests/weekly-status', [UserRequestsController::class, 'getWeeklyRequestsStatus']);
 
-# permission Request
-Route::post('/permit-Request', [PermitStatementController::class, 'getPermitStatement']);
-Route::get('/permit-statements', [PermitStatementController::class, 'index']);
-Route::post('/permit-statements/delete', [PermitStatementController::class, 'destroy']);
+    # Grade Statements
+    Route::post('/grade-Request', [GradeStatementController::class, 'getGradeStatement']);
+    Route::get('/grade-statements', [GradeStatementController::class, 'index']);
+    Route::post('/grade-statements/delete', [GradeStatementController::class, 'destroy']);
 
+    # Permit Statements
+    Route::post('/permit-Request', [PermitStatementController::class, 'getPermitStatement']);
+    Route::get('/permit-statements', [PermitStatementController::class, 'index']);
+    Route::post('/permit-statements/delete', [PermitStatementController::class, 'destroy']);
 
-# Ranking
-Route::post('/ranking', [RankingController::class, 'Ranking']);
+    # Ranking
+    Route::post('/ranking', [RankingController::class, 'Ranking']);
 
-# Regulations
-Route::post('/upload-file', [RegulationFileController::class, 'UploadFile']);
-Route::post('/latest-file', [RegulationFileController::class, 'getLatestFile']);
-Route::get('/regulations', [RegulationFileController::class, 'getAllFiles']);
+    # Regulations
+    Route::post('/upload-file', [RegulationFileController::class, 'UploadFile']);
+    Route::post('/latest-file', [RegulationFileController::class, 'getLatestFile']);
+    Route::get('/regulations', [RegulationFileController::class, 'getAllFiles']);
 
-# Timeline
-Route::post('/create-or-update-timeline', [TimelineController::class, 'CreateOrUpdateTimeline']);
-Route::get('/timeline', [TimelineController::class, 'getTimeline']);
+    # Timeline
+    Route::post('/create-or-update-timeline', [TimelineController::class, 'CreateOrUpdateTimeline']);
+    Route::get('/timeline', [TimelineController::class, 'getTimeline']);
 
-# Notifications
-Route::post('/notifications/send-to-user', [NotificationController::class, 'sendToUser']);
-Route::post('/notifications/send-to-all', [NotificationController::class, 'sendToAll']);
-Route::post('/notifications', [NotificationController::class, 'getUserNotifications']);
-Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
-Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
-Route::post('/notifications/delete-all', [NotificationController::class, 'deleteAllNotifications']);
-Route::post('/notifications/delete', [NotificationController::class, 'deleteNotification']);
+    # Notifications
+    Route::post('/notifications/send-to-user', [NotificationController::class, 'sendToUser']);
+    Route::post('/notifications/send-to-all', [NotificationController::class, 'sendToAll']);
+    Route::post('/notifications', [NotificationController::class, 'getUserNotifications']);
+    Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+    Route::post('/notifications/delete-all', [NotificationController::class, 'deleteAllNotifications']);
+    Route::post('/notifications/delete', [NotificationController::class, 'deleteNotification']);
 
-# get requests
-Route::get('/requests/weekly-status', [UserRequestsController::class, 'getWeeklyRequestsStatus']);
+    # Statistics
+    Route::get('/enrollment-stats', [EnrollmentStatsController::class, 'getRequestsCount']);
+    Route::get('/counts', [StatsController::class, 'getCounts']);
 
-#Enrollment Statistics
-Route::get('/enrollment-stats', [EnrollmentStatsController::class, 'getRequestsCount']);
-Route::get('/counts', [StatsController::class, 'getCounts']);
+    # Complaints
+    Route::post('/write-complaint', [ComplaintController::class, 'store']);
+    Route::get('/complaints', [ComplaintController::class, 'index']);
+    Route::post('/reply-complaint', [ComplaintController::class, 'reply']);
+    Route::post('/user-complaints', [ComplaintController::class, 'complaintsByUser']);
+    Route::post('/complaint/update', [ComplaintController::class, 'update']);
+    Route::post('/complaint/delete', [ComplaintController::class, 'delete']);
 
+    # Faculty Members
+    Route::get('/faculty-members', [FacultyMembersController::class, 'AllMembers']);
+    Route::post('/faculty-members/add', [FacultyMembersController::class, 'store']);
+    Route::post('/faculty-members/update', [FacultyMembersController::class, 'update']);
+    Route::post('/faculty-members/delete', [FacultyMembersController::class, 'delete']);
 
-# Complaints
-Route::post('/write-complaint', [ComplaintController::class, 'store']);
-Route::get('/complaints', [ComplaintController::class, 'index']);
-Route::post('/reply-complaint', [ComplaintController::class, 'reply']);
-Route::post('/user-complaints', [ComplaintController::class, 'complaintsByUser']);
-Route::post('/complaint/update', [ComplaintController::class, 'update']);
-Route::post('/complaint/delete', [ComplaintController::class, 'delete']);
+    # Expenses
+    Route::post('/expenses/add', [ExpensesController::class, 'Upload']);
+    Route::post('/user/expenses', [ExpensesController::class, 'getUserExpenses']);
+    Route::get('/all-expenses', [ExpensesController::class, 'getAllExpenses']);
+    Route::post('/delete-expenses', [ExpensesController::class, 'deleteAllExpenses']);
 
-# Faculty Members
-Route::get('/faculty-members', [FacultyMembersController::class, 'AllMembers']);
-Route::post('/faculty-members/add', [FacultyMembersController::class, 'store']);
-Route::post('/faculty-members/update', [FacultyMembersController::class, 'update']);
-Route::post('/faculty-members/delete', [FacultyMembersController::class, 'delete']);
+    # Forms
+    Route::post('/upload-form', [FormController::class, 'uploadForm']);
+    Route::post('/get-form', [FormController::class, 'getForm']);
+    Route::post('/delete-form', [FormController::class, 'deleteForm']);
+    Route::get('/all-forms', [FormController::class, 'getAllForms']);
+    Route::post('/form/print', [FormController::class, 'fillAndPrintForm']);
 
-# Expenses
-Route::post('/expenses/add', [ExpensesController::class, 'Upload']);
-Route::post('/user/expenses', [ExpensesController::class, 'getUserExpenses']);
-Route::get('/all-expenses', [ExpensesController::class, 'getAllExpenses']);
-Route::post('/delete-expenses', [ExpensesController::class, 'deleteAllExpenses']);
-
-# Forms
-Route::post('/upload-form', [FormController::class, 'uploadForm']);
-Route::post('/get-form', [FormController::class, 'getForm']);
-Route::post('/delete-form', [FormController::class, 'deleteForm']);
-Route::get('/all-forms', [FormController::class, 'getAllForms']);
-Route::post('/form/print', [FormController::class, 'fillAndPrintForm']);
-
-
-
-
+});
